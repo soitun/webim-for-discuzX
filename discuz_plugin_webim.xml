@@ -13,11 +13,11 @@
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[webim/]]></item>
 			<item id="copyright"><![CDATA[NextIM]]></item>
-			<item id="version"><![CDATA[3.0.0]]></item>
+			<item id="version"><![CDATA[1.0.0]]></item>
 			<item id="__modules">
 				<item id="0">
-					<item id="name"><![CDATA[admincp]]></item>
-					<item id="menu"><![CDATA[配置]]></item>
+					<item id="name"><![CDATA[themes]]></item>
+					<item id="menu"><![CDATA[主题选择]]></item>
 					<item id="url"><![CDATA[]]></item>
 					<item id="type"><![CDATA[3]]></item>
 					<item id="adminid"><![CDATA[0]]></item>
@@ -38,7 +38,7 @@
 			<item id="0">
 				<item id="displayorder"><![CDATA[1]]></item>
 				<item id="title"><![CDATA[注册域名]]></item>
-				<item id="description"><![CDATA[]]></item>
+				<item id="description"><![CDATA[在线版用户输入在nextim.cn中注册的域名]]></item>
 				<item id="variable"><![CDATA[domain]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
@@ -47,7 +47,7 @@
 			<item id="1">
 				<item id="displayorder"><![CDATA[2]]></item>
 				<item id="title"><![CDATA[注册apikey]]></item>
-				<item id="description"><![CDATA[]]></item>
+				<item id="description"><![CDATA[域名对应的apikey]]></item>
 				<item id="variable"><![CDATA[apikey]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
@@ -74,12 +74,11 @@
 			<item id="4">
 				<item id="displayorder"><![CDATA[5]]></item>
 				<item id="title"><![CDATA[主题]]></item>
-				<item id="description"><![CDATA[]]></item>
+				<item id="description"><![CDATA[在主题选择功能里选择主题]]></item>
 				<item id="variable"><![CDATA[theme]]></item>
-				<item id="type"><![CDATA[select]]></item>
+				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[base]]></item>
-				<item id="extra"><![CDATA[base = 默认
-					black-tie = 黑色]]></item>
+				<item id="extra"><![CDATA[]]></item>
 			</item>
 			<item id="5">
 				<item id="displayorder"><![CDATA[6]]></item>
@@ -95,7 +94,7 @@
 			<item id="6">
 				<item id="displayorder"><![CDATA[7]]></item>
 				<item id="title"><![CDATA[表情]]></item>
-				<item id="description"><![CDATA[]]></item>
+				<item id="description"><![CDATA[暂无其他表情可选，请不要修改此项]]></item>
 				<item id="variable"><![CDATA[emot]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[default]]></item>
