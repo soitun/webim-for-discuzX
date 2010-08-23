@@ -20,9 +20,9 @@ class plugin_webim {
 		$theme = empty($config['theme']) ? 'base' : $config['theme'];
 		$local = empty($config['local']) ? 'zh-CN' : $config['local'];
 		return <<<EOF
-		<link href="source/plugin/webim/static/webim.uchome.min.css" media="all" type="text/css" rel="stylesheet"/>
+		<link href="source/plugin/webim/static/webim.discuzX.min.css" media="all" type="text/css" rel="stylesheet"/>
 		<link href="source/plugin/webim/static/themes/{$theme}/jquery.ui.theme.css" media="all" type="text/css" rel="stylesheet"/>
-		<script src="source/plugin/webim/static/webim.uchome.min.js" type="text/javascript"></script>
+		<script src="source/plugin/webim/static/webim.discuzX.min.js" type="text/javascript"></script>
 		<script src="source/plugin/webim/static/i18n/webim-{$local}.js" type="text/javascript"></script>
 		<script src="source/plugin/webim/custom.js.php" type="text/javascript"></script>
 EOF;
