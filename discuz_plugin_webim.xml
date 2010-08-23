@@ -36,25 +36,7 @@
 		<item id="version"><![CDATA[X1]]></item>
 		<item id="var">
 			<item id="0">
-				<item id="displayorder"><![CDATA[0]]></item>
-				<item id="title"><![CDATA[IM服务器]]></item>
-				<item id="description"><![CDATA[]]></item>
-				<item id="variable"><![CDATA[host]]></item>
-				<item id="type"><![CDATA[text]]></item>
-				<item id="value"><![CDATA[]]></item>
-				<item id="extra"><![CDATA[]]></item>
-			</item>
-			<item id="1">
-				<item id="displayorder"><![CDATA[0]]></item>
-				<item id="title"><![CDATA[IM服务器端口]]></item>
-				<item id="description"><![CDATA[]]></item>
-				<item id="variable"><![CDATA[port]]></item>
-				<item id="type"><![CDATA[text]]></item>
-				<item id="value"><![CDATA[]]></item>
-				<item id="extra"><![CDATA[]]></item>
-			</item>
-			<item id="2">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[1]]></item>
 				<item id="title"><![CDATA[注册域名]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[domain]]></item>
@@ -62,8 +44,8 @@
 				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
-			<item id="3">
-				<item id="displayorder"><![CDATA[0]]></item>
+			<item id="1">
+				<item id="displayorder"><![CDATA[2]]></item>
 				<item id="title"><![CDATA[注册apikey]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[apikey]]></item>
@@ -71,31 +53,52 @@
 				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
+			<item id="2">
+				<item id="displayorder"><![CDATA[3]]></item>
+				<item id="title"><![CDATA[IM服务器]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[host]]></item>
+				<item id="type"><![CDATA[text]]></item>
+				<item id="value"><![CDATA[webim20.cn]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
+			<item id="3">
+				<item id="displayorder"><![CDATA[4]]></item>
+				<item id="title"><![CDATA[IM服务器端口]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[port]]></item>
+				<item id="type"><![CDATA[text]]></item>
+				<item id="value"><![CDATA[8000]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
 			<item id="4">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[5]]></item>
 				<item id="title"><![CDATA[主题]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[theme]]></item>
-				<item id="type"><![CDATA[text]]></item>
-				<item id="value"><![CDATA[]]></item>
-				<item id="extra"><![CDATA[]]></item>
+				<item id="type"><![CDATA[select]]></item>
+				<item id="value"><![CDATA[base]]></item>
+				<item id="extra"><![CDATA[base = 默认
+					black-tie = 黑色]]></item>
 			</item>
 			<item id="5">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[6]]></item>
 				<item id="title"><![CDATA[本地语言]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[local]]></item>
-				<item id="type"><![CDATA[text]]></item>
-				<item id="value"><![CDATA[]]></item>
-				<item id="extra"><![CDATA[]]></item>
+				<item id="type"><![CDATA[select]]></item>
+				<item id="value"><![CDATA[zh-CN]]></item>
+				<item id="extra"><![CDATA[zh-CN = 简体中文
+					zh-TW = 繁体中文
+					en = English]]></item>
 			</item>
 			<item id="6">
-				<item id="displayorder"><![CDATA[0]]></item>
+				<item id="displayorder"><![CDATA[7]]></item>
 				<item id="title"><![CDATA[表情]]></item>
 				<item id="description"><![CDATA[]]></item>
 				<item id="variable"><![CDATA[emot]]></item>
 				<item id="type"><![CDATA[text]]></item>
-				<item id="value"><![CDATA[]]></item>
+				<item id="value"><![CDATA[default]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 		</item>
