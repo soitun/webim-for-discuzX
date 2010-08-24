@@ -1799,8 +1799,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Mon Aug 23 18:01:36 2010 +0800
- * Commit: 8a2965cf8b86eb8276392793f26c3ca604cbf1c0
+ * Date: Tue Aug 24 16:12:28 2010 +0800
+ * Commit: db2bcb028793a1c316ccbdaa7277f70d8d28d150
  */
 (function(window,document,undefined){
 
