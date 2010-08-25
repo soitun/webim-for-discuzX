@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 17:02:50 2010 +0800
- * Commit: ac35d0f258766d966582722199054a9280568502
+ * Date: Wed Aug 25 17:25:35 2010 +0800
+ * Commit: 4742ba8ae53e645dc161f1e37a712f1b514f1051
  */
 (function(window, document, undefined){
 
@@ -1029,7 +1029,9 @@ extend(webim.prototype, objectExtend,{
 		});
 		room.handle(roomData);
 		room.options.ticket = data.connection.ticket;
-		//handle new messages
+		self.trigger("go",[data]);
+		self.connection.connect(data.connection);
+		//handle new messages at last
 		var n_msg = data.new_messages;
 		if(n_msg && n_msg.length){
 			each(n_msg, function(n, v){
@@ -1037,8 +1039,6 @@ extend(webim.prototype, objectExtend,{
 			});
 			self.trigger("message",[n_msg]);
 		}
-		self.trigger("go",[data]);
-		self.connection.connect(data.connection);
 	},
 	_stop: function(msg){
 		var self = this;
@@ -1805,8 +1805,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 14:31:35 2010 +0800
- * Commit: cb9cfbec9a0309d69101595a73e3f7e316903c28
+ * Date: Wed Aug 25 17:55:25 2010 +0800
+ * Commit: 709eab77134d6c50164fffa73e74ab0f7f224300
  */
 (function(window,document,undefined){
 
@@ -3241,11 +3241,15 @@ widget("layout",{
 		addEvent($.prev,"mouseup", function(){self._slideUp();});
 		disableSelection($.prev);
 		addEvent($.expand, "click", function(){
+			if(!self.isMinimize()) return false;
 			self.expand();
+			self.trigger("expand");
 			return false;
 		});
 		addEvent($.collapse, "click", function(){
+			if(self.isMinimize()) return false;
 			self.collapse();
+			self.trigger("collapse");
 			return false;
 		});
 		hoverClass($.collapse, "ui-state-hover", "ui-state-default");
@@ -3258,13 +3262,11 @@ widget("layout",{
 		var self = this;
 		if(self.isMinimize()) return;
 		addClass(this.$.layout, "webim-layout-minimize");
-		self.trigger("collapse");
 	},
 	expand: function(){
 		var self = this;
 		if(!self.isMinimize()) return;
 		removeClass(self.$.layout, "webim-layout-minimize");
-		self.trigger("expand");
 	},
 	_displayUpdate:function(e){
 		this._ready && this.trigger("displayUpdate");
@@ -4164,7 +4166,7 @@ widget("setting",{
 			return;
 		}
 		var $ = self.$, tag = $[name];
-		if(isChecked && typeof isChecked == "boolean") {
+		if(isChecked && typeof isChecked != "boolean") {
 			return;
 		}
 		if(tag){
@@ -4346,7 +4348,6 @@ app("buddy", {
 	},
 	go: function(){
 		var ui = this, im = ui.im, buddy = im.buddy, buddyUI = ui.buddy;
-		!buddyUI.window.isMinimize() && buddy.loadDelay();
 		buddyUI.notice("count", buddy.count({presence:"online"}));
 		buddyUI.user.update(im.data.user);
 	},
