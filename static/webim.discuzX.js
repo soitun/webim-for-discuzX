@@ -1810,8 +1810,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 18:32:22 2010 +0800
- * Commit: e8c9008f1c6fbeae1ddd7dc5f52d6e272d59807a
+ * Date: Wed Aug 25 18:46:11 2010 +0800
+ * Commit: c338766ed64bbaef90842a95615ca5d780d7cf50
  */
 (function(window,document,undefined){
 
@@ -4346,6 +4346,7 @@ app("buddy", {
 		}).bind("presence", function(params){
 			im.sendPresence(params);
 		});
+		buddyUI.user.update(im.data.user);
 	},
 	ready: function(){
 		var ui = this, im = ui.im, buddy = im.buddy, buddyUI = ui.buddy;
