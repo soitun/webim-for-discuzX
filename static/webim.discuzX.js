@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 17:25:35 2010 +0800
- * Commit: 4742ba8ae53e645dc161f1e37a712f1b514f1051
+ * Date: Wed Aug 25 18:31:05 2010 +0800
+ * Commit: c2dc7fd909cc7c7cabb7446765502a331d1989d7
  */
 (function(window, document, undefined){
 
@@ -984,17 +984,21 @@ function webim(element, options){
 }
 
 extend(webim.prototype, objectExtend,{
-	_init:function(){
+	_init: function(){
 		var self = this;
-		self.data = {user:{}};
+		var user = {};
+		self.data = {user: user};
 		self.status = new webim.status();
 		self.setting = new webim.setting();
 		self.buddy = new webim.buddy(null, {loadDelay: !self.status.get("b")});
-		self.room = new webim.room();
-		self.history = new webim.history();
+		self.room = new webim.room(null, {user: user});
+		self.history = new webim.history(null, {user: user});
 		self.connection = new comet(null,{jsonp:true});
 		self._initEvents();
 		//self.online();
+	},
+	user: function(info){
+		extend(self.data.user, info);
 	},
 	_ready: function(post_data){
 		var self = this;
@@ -1656,8 +1660,9 @@ model("buddy", {
 				}
 			});
 		},
-		join:function(id,user){
-			var self = this, options = self.options;
+		join:function(id){
+			var self = this, options = self.options, user = options.user;
+
 			ajax({
 				cache: false,
 				type: "post",
@@ -1675,8 +1680,8 @@ model("buddy", {
 				}
 			});
 		},
-		leave: function(id,user){
-			var self = this, options = self.options, d = self.dataHash[id];
+		leave: function(id){
+			var self = this, options = self.options, d = self.dataHash[id], user = options.user;
 			if(d){
 				d.initMember = false;
 				ajax({
@@ -1805,8 +1810,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 17:55:25 2010 +0800
- * Commit: 709eab77134d6c50164fffa73e74ab0f7f224300
+ * Date: Wed Aug 25 18:32:22 2010 +0800
+ * Commit: e8c9008f1c6fbeae1ddd7dc5f52d6e272d59807a
  */
 (function(window,document,undefined){
 
@@ -4624,11 +4629,11 @@ app("room",{
 		}).bind("block", function(id, list){
 			setting.set("blocked_rooms",list);
 			updateRoom(room.get(id));
-			room.leave(id,u);
+			room.leave(id);
 		}).bind("unblock", function(id, list){
 			setting.set("blocked_rooms",list);
 			updateRoom(room.get(id));
-			room.join(id,u);
+			room.join(id);
 		}).bind("addMember", function(room_id, info){
 			var c = layout.chat("room", room_id);
 			c && c.addMember(info.id, info.nick, info.id == im.data.user.id);
