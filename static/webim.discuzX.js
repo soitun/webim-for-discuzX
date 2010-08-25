@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 21 20:03:19 2010 +0800
- * Commit: 8fd80daf892b99bb18815d29c95e941ede8d6248
+ * Date: Wed Aug 25 17:02:50 2010 +0800
+ * Commit: ac35d0f258766d966582722199054a9280568502
  */
 (function(window, document, undefined){
 
@@ -1475,6 +1475,7 @@ model("buddy", {
 		if(ids.length){
 			var self = this, options = self.options;
 			ajax({
+				type: "get",
 				url: options.url,
 				cache: false,
 				dataType: "json",
@@ -1642,6 +1643,7 @@ model("buddy", {
 		loadMember: function(id){
 			var self = this, options = self.options;
 			ajax({
+				type: "get",
 				cache: false,
 				url: options.urls.member,
 				dataType: "json",
@@ -1658,6 +1660,7 @@ model("buddy", {
 			var self = this, options = self.options;
 			ajax({
 				cache: false,
+				type: "post",
 				url: options.urls.join,
 				dataType: "json",
 				data: {
@@ -1678,6 +1681,7 @@ model("buddy", {
 				d.initMember = false;
 				ajax({
 					cache: false,
+					type: "post",
 					url: options.urls.leave,
 					data: {
 						ticket: options.ticket,
@@ -1764,6 +1768,7 @@ model("history",{
 		self.trigger("clear", [type, id]);
 		ajax({
 			url: options.urls.clear,
+			type: "post",
 			cache: false,
 			//dataType: "json",
 			data:{ type: type, id: id}
@@ -1782,6 +1787,7 @@ model("history",{
 		ajax({
 			url: options.urls.load,
 			cache: false,
+			type: "get",
 			dataType: "json",
 			data:{type: type, id: id},
 			//context: self,
@@ -1799,8 +1805,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Tue Aug 24 16:12:28 2010 +0800
- * Commit: db2bcb028793a1c316ccbdaa7277f70d8d28d150
+ * Date: Wed Aug 25 14:31:35 2010 +0800
+ * Commit: cb9cfbec9a0309d69101595a73e3f7e316903c28
  */
 (function(window,document,undefined){
 
