@@ -18,8 +18,8 @@
 
 include_once('common.php');
 require 'config.php';
-
 $im = new WebIM($user, null, $_IMC['domain'], $_IMC['apikey'], $_IMC['host'], $_IMC['port']);
+
 $im_buddies = array();//For online.
 $im_rooms = array();//For online.
 
@@ -49,6 +49,8 @@ foreach($online_buddies as $k => $v){
 	$id = $v->id;
 	$im_buddies[] = $id;
 	$buddies_with_info[] = $id;
+	$v->presence = "offline";
+	$v->show = "unavailable";
 	$cache_buddies[$id] = $v;
 }
 
@@ -63,11 +65,14 @@ if(!empty($buddies_without_info)){
 	foreach(buddy(implode(",", $buddies_without_info)) as $k => $v){
 		$id = $v->id;
 		$im_buddies[] = $id;
+		$v->presence = "offline";
+		$v->show = "unavailable";
 		$cache_buddies[$id] = $v;
 	}
 }
 
-//Find im_rooms except blocked.
+//Find im_rooms 
+//Except blocked.
 foreach($rooms as $k => $v){
 	$id = $v->id;
 	if(in_array($id, $blocked_rooms)){
@@ -85,9 +90,8 @@ $data = $im->online(implode(",", $im_buddies), implode(",", $im_rooms));
 
 if($data->success){
 	$data->new_messages = $new_messages;
-	$show_buddies = array();//For output.
 
-	//Add room online info.
+	//Add room online member count.
 	foreach($data->rooms as $k => $v){
 		$id = $v->id;
 		$cache_rooms[$id]->count = $v->count;
@@ -95,24 +99,38 @@ if($data->success){
 	//Show all rooms.
 	$data->rooms = $rooms;
 
+	$show_buddies = array();//For output.
+	foreach($data->buddies as $k => $v){
+		$id = $v->id;
+		if(!isset($cache_buddies[$id])){
+			$cache_buddies[$id] = (object)array(
+				"id" => $id,
+				"nick" => $id,
+				"need_reload" => true,
+			);
+		}
+		$b = $cache_buddies[$id];
+		$b->presence = $v->presence;
+		$b->show = $v->show;
+		#show online buddy
+		$show_buddies[] = $id;
+	}
+	#show active buddy
+	$show_buddies = array_unique(array_merge($show_buddies, $active_buddies));
+	$show_buddies = array_map(function($id){
+		global $cache_buddies;
+		return $cache_buddies[$id];
+	}, $show_buddies);
+	$data->buddies = $show_buddies;
+
+	complete_status(array_merge(array($user), $show_buddies));
+
+	new_message_to_histroy();
+
+	echo json_encode($data);
+
 }else{
 	header("HTTP/1.0 404 Not Found");
 	echo json_encode($data->error_msg);
 }
-
-var_export($data);
-//print_r($new_messages);
-print_r($active_buddies);
-print_r($active_rooms);
-print_r($im_buddies);
-print_r($im_rooms);
-//print_r($rooms);
-//print_r($online_buddies);
-//print_r($rooms);
-
-//print_r(history("unicast", "webim"));
-//print_r(history("multicast", "36"));
-//print_r(new_message());
-//new_message_to_histroy();
-
 

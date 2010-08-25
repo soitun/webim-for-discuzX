@@ -12,4 +12,10 @@
 
 include_once('common.php');
 
-
+$ids = g("ids");
+if(empty($ids)){
+	header("HTTP/1.0 400 Bad Request");
+	echo 'Empty get $ids';
+}else{
+	echo json_encode(room($ids));
+}
