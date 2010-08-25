@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 18:31:05 2010 +0800
- * Commit: c2dc7fd909cc7c7cabb7446765502a331d1989d7
+ * Date: Wed Aug 25 18:37:08 2010 +0800
+ * Commit: 662c8e95431d78d2b965940c58f8ec32adcefffa
  */
 (function(window, document, undefined){
 
@@ -998,7 +998,7 @@ extend(webim.prototype, objectExtend,{
 		//self.online();
 	},
 	user: function(info){
-		extend(self.data.user, info);
+		extend(this.data.user, info);
 	},
 	_ready: function(post_data){
 		var self = this;
