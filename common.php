@@ -109,14 +109,15 @@ function buddy($ids){
 
 /**
  * Get room list
- * $id: 
+ * $ids: Get all user rooms if not given.
  *
  */
 
-function room($id=null){
+function room($ids=null){
 	global $user;
-	if($id){
-		$where = "f.fid = $id";
+	if($ids){
+		$ids = "'".implode("','", explode(",", $ids))."'";
+		$where = "f.fid = ($ids)";
 	}else{
 		$where = "f.fid IN (SELECT fid FROM ".DB::table("forum_groupuser")." WHERE uid=$user->uid)";
 	}
