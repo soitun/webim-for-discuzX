@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 18:37:08 2010 +0800
- * Commit: 662c8e95431d78d2b965940c58f8ec32adcefffa
+ * Date: Wed Aug 25 19:02:25 2010 +0800
+ * Commit: 3018296b07069b9b2cfd1e1a3c56d82deed3f0d8
  */
 (function(window, document, undefined){
 
@@ -1269,6 +1269,7 @@ extend(webim,{
 model("setting",{
 	url: "/webim/setting",
 	data: {
+		blocked_rooms: [],
 		play_sound:true,
 		buddy_sticky:true,
 		minimize_layout: false,
@@ -1810,8 +1811,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 18:46:11 2010 +0800
- * Commit: c338766ed64bbaef90842a95615ca5d780d7cf50
+ * Date: Wed Aug 25 19:02:03 2010 +0800
+ * Commit: 6f6386d9eba9eaaab5331603d69681e5d6974040
  */
 (function(window,document,undefined){
 
@@ -4121,6 +4122,9 @@ widget("setting",{
 	template: function(){
 		var self = this, temp = [], data = self.options.data;
 		data && each(data, function(key, val){
+			if(val && typeof val != "boolean") {
+				return;
+			}
 			temp.push(self._check_tpl(key, val));
 		});
 		return tpl(self.options.template,{
