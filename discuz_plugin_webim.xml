@@ -101,7 +101,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 		</item>
-		<item id="intro"><![CDATA[WebIM intro]]></item>
+		<item id="intro"><![CDATA[WebIM]]></item>
 		<item id="installfile"><![CDATA[install.php]]></item>
 		<item id="uninstallfile"><![CDATA[uninstall.php]]></item>
 		<item id="language">
@@ -110,6 +110,8 @@
 			</item>
 			<item id="templatelang">
 				<item id="example"><![CDATA[示例]]></item>
+				<item id="themes_tips"><![CDATA[选择你喜欢的主题，点击便可立即更换]]></item>
+				<item id="themes_success"><![CDATA[主题更新成功，您可以更新DiscuzX页面查看效果。]]></item>
 			</item>
 		</item>
 	</item>
