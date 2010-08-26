@@ -104,5 +104,13 @@
 		<item id="intro"><![CDATA[WebIM intro]]></item>
 		<item id="installfile"><![CDATA[install.php]]></item>
 		<item id="uninstallfile"><![CDATA[uninstall.php]]></item>
+		<item id="language">
+			<item id="scriptlang">
+				<item id="example"><![CDATA[示例]]></item>
+			</item>
+			<item id="templatelang">
+				<item id="example"><![CDATA[示例]]></item>
+			</item>
+		</item>
 	</item>
 </root>
