@@ -23,7 +23,7 @@ ${REL_FILE}: ${DIST_DIR} ${CACHE_DIR}
 	@@echo "Zip ${REL_FILE}"
 	@@zip -r -q ${REL_FILE} ${CACHE_DIR}
 
-${CACHE_DIR}: ${LIB_DIR}
+${CACHE_DIR}: ${LIB_DIR}/webim.class.php
 	@@echo "Create cache directory"
 	@@mkdir -p ${CACHE_DIR}
 	@@echo "Copy source"
@@ -43,7 +43,7 @@ ${DIST_DIR}:
 	@@mkdir -p ${DIST_DIR}
 	@@echo "	"${DIST_DIR}
 
-${LIB_DIR}:
+${LIB_DIR}/webim.class.php:
 	@@git submodule update --init ui
 
 clean:
