@@ -44,7 +44,7 @@ ${DIST_DIR}:
 	@@echo "	"${DIST_DIR}
 
 ${LIB_DIR}/webim.class.php:
-	@@git submodule update --init ui
+	@@git submodule update --init lib
 
 clean:
 	@@echo "Remove release cache and dist directory"
