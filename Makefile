@@ -42,7 +42,9 @@ ${LIB_DIR}:
 	@@git submodule update --init ui
 
 clean:
-	@@echo "Remove release cache"
+	@@echo "Remove release cache and dist directory"
+	@@rm -rf ${DIST_DIR}
 	@@rm -rf ${CACHE_DIR}
+	@@echo "	"${DIST_DIR}
 	@@echo "	"${CACHE_DIR}
 
