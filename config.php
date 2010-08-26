@@ -7,7 +7,7 @@
  */
 
 $_IMC = array();
-$_IMC["version"] = "1.0.0";//版本
+$_IMC["version"] = "@VERSION";//版本
 $_IMC["domain"] = "";//网站注册域名
 $_IMC["apikey"] = "";//网站注册apikey
 $_IMC["host"] = "webim20.cn";//im服务器

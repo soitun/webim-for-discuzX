@@ -13,7 +13,7 @@
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[webim/]]></item>
 			<item id="copyright"><![CDATA[NextIM]]></item>
-			<item id="version"><![CDATA[1.0.0]]></item>
+			<item id="version"><![CDATA[@VERSION]]></item>
 			<item id="__modules">
 				<item id="0">
 					<item id="name"><![CDATA[themes]]></item>
