@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 19:02:25 2010 +0800
- * Commit: 3018296b07069b9b2cfd1e1a3c56d82deed3f0d8
+ * Date: Wed Aug 25 19:34:50 2010 +0800
+ * Commit: f07d01701403a1efd420da142283d005ec3f80df
  */
 (function(window, document, undefined){
 
@@ -1272,7 +1272,7 @@ model("setting",{
 		blocked_rooms: [],
 		play_sound:true,
 		buddy_sticky:true,
-		minimize_layout: false,
+		minimize_layout: true,
 		msg_auto_pop:true
 	}
 },{
@@ -1811,8 +1811,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 19:02:03 2010 +0800
- * Commit: 6f6386d9eba9eaaab5331603d69681e5d6974040
+ * Date: Thu Aug 26 19:21:56 2010 +0800
+ * Commit: 64dfceb4717e3969a50bdd55124d4e8a3368233b
  */
 (function(window,document,undefined){
 
