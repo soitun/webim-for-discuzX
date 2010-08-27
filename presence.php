@@ -14,7 +14,6 @@
 
 include_once('common.php');
 
-$ticket = p("ticket");
 $show = p("show");
 $status = p("status");
 if(empty($ticket) || empty($show)){

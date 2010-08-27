@@ -28,6 +28,12 @@ $user->pic_url = avatar($user->id, 'small', true);
 $user->show = gp('show') ? gp('show') : "unavailable";
 $user->url = "home.php?mod=space&uid=".$user->uid;
 
+//Common $ticket
+
+$ticket = gp('ticket');
+if($ticket){
+	$ticket = stripslashes($ticket);
+}
 
 /**
  * Add status to member info.

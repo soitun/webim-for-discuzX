@@ -13,7 +13,6 @@
 
 include_once('common.php');
 
-$ticket = p("ticket");
 $id = p("id");
 if(empty($ticket) || empty($id)){
 	header("HTTP/1.0 400 Bad Request");
