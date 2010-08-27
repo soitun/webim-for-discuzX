@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Aug 25 19:34:50 2010 +0800
- * Commit: f07d01701403a1efd420da142283d005ec3f80df
+ * Date: Fri Aug 27 16:54:47 2010 +0800
+ * Commit: 67ceb33bdf89213a903a9f1bce8770be69f992ae
  */
 (function(window, document, undefined){
 
@@ -1021,7 +1021,7 @@ extend(webim.prototype, objectExtend,{
 			history.init("unicast", v.id, v.history);
 		});
 		buddy.online(ids);
-		buddy.handle(data.buddies);
+		buddy.handle(buddies);
 		//rooms
 		each(data.rooms, function(n, v){
 			history.init("multicast", v.id, v.history);
@@ -1811,8 +1811,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Aug 26 19:21:56 2010 +0800
- * Commit: 64dfceb4717e3969a50bdd55124d4e8a3368233b
+ * Date: Fri Aug 27 16:55:24 2010 +0800
+ * Commit: c26d6d5065a0250ec048a4ec1158ba49937ae0c7
  */
 (function(window,document,undefined){
 
