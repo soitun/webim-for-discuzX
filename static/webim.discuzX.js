@@ -1,12 +1,12 @@
 /*!
- * Webim v1.0.0pre
+ * Webim v1.0.0
  * http://www.webim20.cn/
  *
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 28 17:33:07 2010 +0800
- * Commit: 489d6eba549b232d90870b925081f6853070f2aa
+ * Date: Sat Aug 28 19:43:13 2010 +0800
+ * Commit: 79741a1eb92f3c500f7e09ceb6437cb45b74a244
  */
 (function(window, document, undefined){
 
@@ -1227,7 +1227,7 @@ function model(name, defaults, proto){
 window.webim = webim;
 
 extend(webim,{
-	version:"1.0.0pre",
+	version:"1.0.0",
 	defaults:{
 		urls:{
 			online: "webim/online",
@@ -1806,14 +1806,14 @@ model("history",{
 });
 })(window, document);
 /*!
- * Webim UI v3.0.0pre
+ * Webim UI v3.0.0
  * http://www.webim20.cn/
  *
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 28 17:49:34 2010 +0800
- * Commit: 08abac979f927a04ba85755fe1529016f0769f92
+ * Date: Sat Aug 28 19:45:39 2010 +0800
+ * Commit: 7ceb7da5074330c9d143065ab255fcadc423c909
  */
 (function(window,document,undefined){
 
@@ -2637,7 +2637,7 @@ function app(name, events){
 	webimUI.apps[name] = events || {};
 }
 extend(webimUI,{
-	version: "3.0.0pre",
+	version: "3.0.0",
 	widget: widget,
 	app: app,
 	plugin: plugin,
