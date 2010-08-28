@@ -1805,14 +1805,14 @@ model("history",{
 });
 })(window, document);
 /*!
- * Webim UI v1.0.0pre
+ * Webim UI v3.0.0pre
  * http://www.webim20.cn/
  *
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Fri Aug 27 16:55:24 2010 +0800
- * Commit: c26d6d5065a0250ec048a4ec1158ba49937ae0c7
+ * Date: Sat Aug 28 14:27:25 2010 +0800
+ * Commit: 5ef41b59f1b1767bd772f5f53c329818e2956ac8
  */
 (function(window,document,undefined){
 
@@ -2636,7 +2636,7 @@ function app(name, events){
 	webimUI.apps[name] = events || {};
 }
 extend(webimUI,{
-	version: "1.0.0pre",
+	version: "3.0.0pre",
 	widget: widget,
 	app: app,
 	plugin: plugin,
