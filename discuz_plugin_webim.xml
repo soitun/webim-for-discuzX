@@ -12,7 +12,7 @@
 			<item id="description"><![CDATA[]]></item>
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[webim/]]></item>
-			<item id="copyright"><![CDATA[NextIM]]></item>
+			<item id="copyright"><![CDATA[webim20.cn]]></item>
 			<item id="version"><![CDATA[@VERSION]]></item>
 			<item id="__modules">
 				<item id="0">
@@ -38,7 +38,7 @@
 			<item id="0">
 				<item id="displayorder"><![CDATA[1]]></item>
 				<item id="title"><![CDATA[注册域名]]></item>
-				<item id="description"><![CDATA[在线版用户输入在nextim.cn中注册的域名]]></item>
+				<item id="description"><![CDATA[在线版用户输入在webim20.cn中注册的域名]]></item>
 				<item id="variable"><![CDATA[domain]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
@@ -101,7 +101,7 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 		</item>
-		<item id="intro"><![CDATA[WebIM]]></item>
+		<item id="intro"><![CDATA[webim是一个为DiscuzX用户打造的网页版及时聊天工具，用户通过聊天工具栏可随即与在线好友聊天。在线版用户安装后需要到webim20.cn注册一个apikey，配置后即可使用。更多帮助信息请访问 webim20.cn。]]></item>
 		<item id="installfile"><![CDATA[install.php]]></item>
 		<item id="uninstallfile"><![CDATA[uninstall.php]]></item>
 		<item id="language">
