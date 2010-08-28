@@ -117,11 +117,14 @@ if($data->success){
 	}
 	#show active buddy
 	$show_buddies = array_unique(array_merge($show_buddies, $active_buddies));
-	function map_buddy($id){
-		global $cache_buddies;
-		return $cache_buddies[$id];
+	$o = array();
+	foreach($show_buddies as $k => $v){
+		//Some user maybe not exist.
+		if(isset($cache_buddies[$id])){
+			$o[] = $cache_buddies[$id];
+		}
 	}
-	$show_buddies = array_map(map_buddy, $show_buddies);
+	$show_buddies = $o;
 	$data->buddies = $show_buddies;
 
 	complete_status(array_merge(array($user), $show_buddies));
