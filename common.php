@@ -171,14 +171,14 @@ function history($type, $id){
 			OR (`from`='$id' AND `to`='$user_id' AND `todel` != 1))  
 			ORDER BY timestamp DESC LIMIT 30");
 		while ($value = DB::fetch($query)){
-			$list[] = log_item($value);
+			array_unshift($list, log_item($value);
 		}
 	}elseif($type == "multicast"){
 		$query = DB::query("SELECT * FROM ".DB::table('webim_histories')." 
 			WHERE `to`='$id' AND `type`='multicast' AND send = 1 
 			ORDER BY timestamp DESC LIMIT 30");
 		while ($value = DB::fetch($query)){
-			$list[] = log_item($value);
+			array_unshift($list, log_item($value);
 		}
 	}else{
 	}
@@ -198,7 +198,7 @@ function new_message() {
 		WHERE `to`='$id' and send = 0 
 		ORDER BY timestamp DESC LIMIT 100");
 	while ($value = DB::fetch($query)){
-		$list[] = log_item($value);
+		array_unshift($list, log_item($value);
 	}
 	return $list;
 }
