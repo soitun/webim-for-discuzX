@@ -1811,8 +1811,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 28 14:27:25 2010 +0800
- * Commit: 5ef41b59f1b1767bd772f5f53c329818e2956ac8
+ * Date: Sat Aug 28 16:46:26 2010 +0800
+ * Commit: 97707f78df7f8d730b4adb3e2befc5a7912c03ba
  */
 (function(window,document,undefined){
 
@@ -2442,7 +2442,7 @@ extend(webimUI.prototype, objectExtend, {
 		a = status.get("a");
 
 		tabIds && tabIds.length && tabs && each(tabs, function(k,v){
-			var id = k.slice(2), type = k[0];
+			var id = k.slice(2), type = k.slice(0,1);
 			self.addChat(type, id, {}, { isMinimize: true});
 			layout.chat(k).window.notifyUser("information", v["n"]);
 		});
@@ -3239,7 +3239,14 @@ widget("layout",{
 	},
 	_initEvents: function(){
 		var self = this, win = self.window, $ = self.$;
-		addEvent(win,"resize", function(){self.buildUI();});
+		//Ie will call resize events after onload.
+		var c = false;
+		addEvent(win,"resize", function(){
+			if(c){
+				c = true;
+				self.buildUI();
+			}
+		});
 		addEvent($.next,"mousedown", function(){self._slide(-1);});
 		addEvent($.next,"mouseup", function(){self._slideUp();});
 		disableSelection($.next);
@@ -3370,7 +3377,8 @@ widget("layout",{
 		if(!panels[id]){
 			var win = self.tabs[id] = new webimUI.window(null, extend({
 				isMinimize: self.activeTabId || !self.options.chatAutoPop,
-				tabWidth: self.tabWidth -2
+				tabWidth: self.tabWidth -2,
+				titleVisibleLength: 9
 			},winOptions)).bind("close", function(){ self._onChatClose(id)}).bind("displayStateChange", function(state){ self._onChatChange(id,state)});
 			self.tabIds.push(id);
 			self.$.tabs.insertBefore(win.element, self.$.tabs.firstChild);
