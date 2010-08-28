@@ -25,7 +25,7 @@ $user->uid = $_G['uid'];
 $user->id = to_utf8($_G['username']);
 $user->nick = to_utf8($_G['username']);
 $user->pic_url = avatar($user->id, 'small', true);
-$user->show = gp('show') ? gp('show') : "unavailable";
+$user->show = gp('show') ? gp('show') : "available";
 $user->url = "home.php?mod=space&uid=".$user->uid;
 
 //Common $ticket

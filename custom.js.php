@@ -42,6 +42,9 @@ $setting = json_encode(setting());
 	var ui = new webim.ui(document.body, {
 		soundUrls: soundUrls
 	}), im = ui.im;
+	<?php
+	$user->show = 'unavailable';
+	?>
 	im.user(<?php echo json_encode($user); ?>);
 	//ui.addApp("menu", {"data": menu});
 	//rm shortcut in uchome
