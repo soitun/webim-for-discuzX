@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Fri Aug 27 16:54:47 2010 +0800
- * Commit: 67ceb33bdf89213a903a9f1bce8770be69f992ae
+ * Date: Sat Aug 28 17:33:07 2010 +0800
+ * Commit: 489d6eba549b232d90870b925081f6853070f2aa
  */
 (function(window, document, undefined){
 
@@ -986,7 +986,8 @@ function webim(element, options){
 extend(webim.prototype, objectExtend,{
 	_init: function(){
 		var self = this;
-		var user = {};
+		//Default user status info.
+		var user = {presence: 'offline', show: 'unavailable'};
 		self.data = {user: user};
 		self.status = new webim.status();
 		self.setting = new webim.setting();
@@ -1811,8 +1812,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 28 16:46:26 2010 +0800
- * Commit: 97707f78df7f8d730b4adb3e2befc5a7912c03ba
+ * Date: Sat Aug 28 17:49:34 2010 +0800
+ * Commit: 08abac979f927a04ba85755fe1529016f0769f92
  */
 (function(window,document,undefined){
 
@@ -2323,10 +2324,10 @@ extend(webimUI.prototype, objectExtend, {
 			self._initStatus();
 			//setting.set(data.setting);
 		}).bind("stop", function(type){
-			layout.changeState("stop");
 			//hide(layout.widget("room").window.element);
 			type == "offline" && layout.removeAllChat();
 			layout.updateAllChat();
+			layout.changeState("stop");
 		});
 		//setting events
 		setting.bind("update",function(key, val){
@@ -4236,7 +4237,7 @@ widget("user",{
 		});
 	},
 	update: function(info){
-		var self = this, type = info.show || "available", $ = self.$;
+		var self = this, type = info.show || "unavailable", $ = self.$;
 		self.options.info = info;
 		$.userStatus.innerHTML = info.status || i18n(type);
 		$.userNick.innerHTML = info.nick || "";
