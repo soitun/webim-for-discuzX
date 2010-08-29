@@ -101,7 +101,11 @@
 				<item id="extra"><![CDATA[]]></item>
 			</item>
 		</item>
-		<item id="intro"><![CDATA[webim是一个为DiscuzX用户打造的网页版及时聊天工具，用户通过聊天工具栏可随即与在线好友聊天。在线版用户安装后需要到webim20.cn注册一个apikey，配置后即可使用。更多帮助信息请访问 webim20.cn。]]></item>
+		<item id="intro"><![CDATA[webim是一个为DiscuzX用户打造的网页版及时聊天工具，用户通过聊天工具栏可随即与在线好友聊天。在线版用户安装后需要到webim20.cn注册一个apikey，配置后即可使用。更多帮助信息请访问 [url=http://www.webim20.cn]webim20.cn[/url]
+
+			[img]http://demo.webim20.cn/home/webim/static/images/webim.jpg[/img]
+			[img]http://demo.webim20.cn/home/webim/static/images/themes.jpg[/img]
+			]]></item>
 		<item id="installfile"><![CDATA[install.php]]></item>
 		<item id="uninstallfile"><![CDATA[uninstall.php]]></item>
 		<item id="language">
