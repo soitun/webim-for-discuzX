@@ -32,10 +32,6 @@ $active_rooms = ids_array(gp('room_ids'));
 
 $new_messages = new_message();
 $online_buddies = online_buddy();
-$rooms = room();
-$setting = setting();
-$blocked_rooms = $setting && is_array($setting->blocked_rooms) ? $setting->blocked_rooms : array();
-
 $buddies_with_info = array();//Buddy with info.
 
 //Active buddy who send a new message.
@@ -70,18 +66,24 @@ if(!empty($buddies_without_info)){
 		$cache_buddies[$id] = $v;
 	}
 }
-
-//Find im_rooms 
-//Except blocked.
-foreach($rooms as $k => $v){
-	$id = $v->id;
-	if(in_array($id, $blocked_rooms)){
-		$v->blocked = true;
-	}else{
-		$v->blocked = false;
-		$im_rooms[] = $id;
+if(!$_IMC['disable_room']){
+	$rooms = room();
+	$setting = setting();
+	$blocked_rooms = $setting && is_array($setting->blocked_rooms) ? $setting->blocked_rooms : array();
+	//Find im_rooms 
+	//Except blocked.
+	foreach($rooms as $k => $v){
+		$id = $v->id;
+		if(in_array($id, $blocked_rooms)){
+			$v->blocked = true;
+		}else{
+			$v->blocked = false;
+			$im_rooms[] = $id;
+		}
+		$cache_rooms[$id] = $v;
 	}
-	$cache_rooms[$id] = $v;
+}else{
+	$rooms = array();
 }
 
 //===============Online===============
@@ -91,12 +93,14 @@ $data = $im->online(implode(",", $im_buddies), implode(",", $im_rooms));
 if($data->success){
 	$data->new_messages = $new_messages;
 
-	//Add room online member count.
-	foreach($data->rooms as $k => $v){
-		$id = $v->id;
-		$cache_rooms[$id]->count = $v->count;
+	if(!$_IMC['disable_room']){
+		//Add room online member count.
+		foreach($data->rooms as $k => $v){
+			$id = $v->id;
+			$cache_rooms[$id]->count = $v->count;
+		}
+		//Show all rooms.
 	}
-	//Show all rooms.
 	$data->rooms = $rooms;
 
 	$show_buddies = array();//For output.

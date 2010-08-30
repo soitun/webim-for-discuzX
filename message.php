@@ -32,7 +32,7 @@ if(empty($ticket) || empty($type) || empty($to) || empty($body)){
 		"to" => $to,
 		"from" => $user->id,
 		"nick" => $user->nick,
-		"body" => from_utf8($body),
+		"body" => $body,
 		"style" => $style,
 		"timestamp" => microtime(true)*1000,
 	));

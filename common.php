@@ -9,8 +9,15 @@ $discuz->init();
 if(!defined('IN_DISCUZ') || !$_G['uid']) {
 	exit('Access Denied');
 }
+
+//Find and insert data with utf8 client.
+DB::query("SET NAMES utf8");
+
 //Cache friend_groups;
 $friend_groups = friend_group_list();
+foreach($friend_groups as $k => $v){
+	$friend_groups[$k] = to_utf8($v);
+}
 
 /**
  * Init im user.
@@ -56,7 +63,7 @@ function complete_status($members){
 		$ids = implode(",", $ids);
 		$query = DB::query("SELECT uid, spacenote FROM ".DB::table('common_member_field_home')." WHERE uid IN ($ids)");
 		while($res = DB::fetch($query)) {
-			$ob[$res['uid']]->status = to_utf8($res['spacenote']);
+			$ob[$res['uid']]->status = $res['spacenote'];
 		}
 	}
 	return $members;
@@ -74,8 +81,8 @@ function online_buddy(){
 	while ($value = DB::fetch($query)){
 		$list[] = (object)array(
 			"uid" => $value['fuid'],
-			"id" => to_utf8($value['fusername']),
-			"nick" => to_utf8($value['fusername']),
+			"id" => $value['fusername'],
+			"nick" => $value['fusername'],
 			"group" => $friend_groups[$value['gid']],
 			"url" => "home.php?mod=space&uid=".$value['fuid'],
 			"pic_url" => avatar($value['fuid'], 'small', true),
@@ -102,8 +109,8 @@ function buddy($ids){
 	while ($value = DB::fetch($query)){
 		$list[] = (object)array(
 			"uid" => $value['uid'],
-			"id" => to_utf8($value['username']),
-			"nick" => to_utf8($value['username']),
+			"id" => $value['username'],
+			"nick" => $value['username'],
 			"group" => $value['gid'] ? $friend_groups[$value['gid']] : "stranger",
 			"url" => "home.php?mod=space&uid=".$value['uid'],
 			"pic_url" => avatar($value['uid'], 'small', true),
@@ -136,10 +143,10 @@ function room($ids=null){
 		$list[] = (object)array(
 			"fid" => $value['fid'],
 			"id" => $value['fid'],
-			"nick" => to_utf8($value['name']),
+			"nick" => $value['name'],
 			"url" => "forum.php?mod=group&fid=".$value['fid'],
 			"pic_url" => get_groupimg($value['icon'], 'icon'),
-			"status" => to_utf8($value['description']),
+			"status" => $value['description'],
 			"count" => 0,
 			"all_count" => $value['membernum'],
 			"blocked" => false,
@@ -215,11 +222,11 @@ function new_message_to_histroy() {
 
 function log_item($value){
 	return (object)array(
-		'to' => to_utf8($value['to']),
-		'nick' => to_utf8($value['nick']),
-		'from' => to_utf8($value['from']),
+		'to' => $value['to'],
+		'nick' => $value['nick'],
+		'from' => $value['from'],
 		'style' => $value['style'],
-		'body' => to_utf8($value['body']),
+		'body' => $value['body'],
 		'type' => $value['type'],
 		'timestamp' => $value['timestamp']
 	);

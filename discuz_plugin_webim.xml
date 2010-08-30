@@ -100,6 +100,15 @@
 				<item id="value"><![CDATA[default]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
+			<item id="7">
+				<item id="displayorder"><![CDATA[8]]></item>
+				<item id="title"><![CDATA[禁止群组聊天]]></item>
+				<item id="description"><![CDATA[]]></item>
+				<item id="variable"><![CDATA[disable_room]]></item>
+				<item id="type"><![CDATA[radio]]></item>
+				<item id="value"><![CDATA[0]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
 		</item>
 		<item id="intro"><![CDATA[webim是一个为DiscuzX用户打造的网页版及时聊天工具，用户通过聊天工具栏可随即与在线好友聊天。在线版用户安装后需要到webim20.cn注册一个apikey，配置后即可使用。更多帮助信息请访问 [url=http://www.webim20.cn]webim20.cn[/url]
 
