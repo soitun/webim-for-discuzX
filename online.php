@@ -122,7 +122,7 @@ if($data->success){
 	#show active buddy
 	$show_buddies = array_unique(array_merge($show_buddies, $active_buddies));
 	$o = array();
-	foreach($show_buddies as $k => $v){
+	foreach($show_buddies as $id){
 		//Some user maybe not exist.
 		if(isset($cache_buddies[$id])){
 			$o[] = $cache_buddies[$id];
