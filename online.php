@@ -110,7 +110,7 @@ if($data->success){
 			$cache_buddies[$id] = (object)array(
 				"id" => $id,
 				"nick" => $id,
-				"need_reload" => true,
+				"incomplete" => true,
 			);
 		}
 		$b = $cache_buddies[$id];
