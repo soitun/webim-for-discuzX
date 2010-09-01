@@ -1764,8 +1764,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Sep 1 21:08:56 2010 +0800
- * Commit: 8a533826752fdcffe65040e11c901920d952e4b5
+ * Date: Wed Sep 1 21:54:53 2010 +0800
+ * Commit: 6ce5d9db5c438a21215730ab69480619b978ac5e
  */
 (function(window,document,undefined){
 
@@ -4890,23 +4890,25 @@ app("chatlink", {
 });
 widget("chatlink",
        {
-	       re_link: [/space\.php\?uid=(\d+)$/i, /space\-(\d+)\.html$/i, /space\-uid\-(\d+)\.html$/i, /\?mod=space&uid=(\d+)$/, /\?(\d+)$/],
-	       re_space: [/space\.php\?uid=(\d+)$/i, /space\-(\d+)\.html$/i, /space\-uid\-(\d+)\.html$/i, /\?mod=space&uid=(\d+)/, /\?(\d+)$/],
-	       re_space_class: /spacemenu_list|line_list|xl\sxl2\scl/i,
-	       re_space_id: /profile_act/i,
-	       wrap_link: null,
-	       wrap_space: null
+	       link_href: [/space\.php\?uid=(\d+)$/i, /space\-(\d+)\.html$/i, /space\-uid\-(\d+)\.html$/i, /\?mod=space&uid=(\d+)$/, /\?(\d+)$/],
+	       space_href: [/space\.php\?uid=(\d+)$/i, /space\-(\d+)\.html$/i, /space\-uid\-(\d+)\.html$/i, /\?mod=space&uid=(\d+)/, /\?(\d+)$/],
+	       space_class: /spacemenu_list|line_list|xl\sxl2\scl/i,
+	       space_id: /profile_act/i,
+	       link_class_out: null,
+	       link_wrap: null,
+	       space_wrap: null
        },
        {
 	       _init: function(){
 		       var self = this, element = self.element, list = self.list = {}, 
 		       options = self.options, anthors = self.anthors = {}, 
-		       re_link = options.re_link, 
-		       re_space = options.re_space, 
-		       re_space_id = options.re_space_id, 
-		       re_space_class = options.re_space_class, 
-		       wrap_space = options.wrap_space || document, 
-		       wrap_link = options.wrap_link || document;
+		       link_href = options.link_href, 
+		       space_href = options.space_href, 
+		       space_id = options.space_id, 
+		       link_class_out = options.link_class_out,
+		       space_class = options.space_class, 
+		       space_wrap = options.space_wrap || document, 
+		       link_wrap = options.link_wrap || document;
 
 		       function parse_id(link, re){
 			       if(!link)return false;
@@ -4919,22 +4921,22 @@ widget("chatlink",
 			       }
 			       return false;
 		       }
-		       var a = wrap_link.getElementsByTagName("a"), b;
+		       var a = link_wrap.getElementsByTagName("a"), b;
 
 		       a && each(a, function(i, el){
-			       var id = parse_id(el.href, re_link), text = el.innerHTML;
-			       if(id && children(el).length == 0 && text){
+			       var id = parse_id(el.href, link_href), text = el.innerHTML;
+			       if(id && children(el).length == 0 && text && (!el.className || !link_class_out || !link_class_out.test(el.className))){
 				       anthors[id] ? anthors[id].push(el) :(anthors[id] = [el]);
 				       list[id] = {id: id, name: text};
 			       }
 		       });
-		       var id = parse_id(window.location.href, re_space);
+		       var id = parse_id(window.location.href, space_href);
 		       if(id){
 			       list[id] = extend(list[id], {id: id});
-			       var els = wrap_space.getElementsByTagName("*"), l = els.length, el, className, attr_id;
+			       var els = space_wrap.getElementsByTagName("*"), l = els.length, el, className, attr_id;
 			       for(var i = 0; i < l ; i++){
 				       el = els[i], className = el.className, attr_id = el.id;
-				       if((re_space_class && re_space_class.test(className)) || (re_space_id && re_space_id.test(attr_id)))
+				       if((space_class && space_class.test(className)) || (space_id && space_id.test(attr_id)))
 					       {
 						       el = children(el);
 						       if(el.length){
