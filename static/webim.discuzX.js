@@ -1764,8 +1764,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Sep 1 18:53:59 2010 +0800
- * Commit: 5dd0d275972f5c49cf89d3671f950d5fbce6f474
+ * Date: Wed Sep 1 21:08:56 2010 +0800
+ * Commit: 8a533826752fdcffe65040e11c901920d952e4b5
  */
 (function(window,document,undefined){
 
@@ -4863,7 +4863,7 @@ widget("menu",{
 app("chatlink", {
 	init: function(options){
 		var ui = this, im = ui.im;
-		var chatlink = ui.chatlink = new webim.ui.chatlink(null).bind("select", function(id){
+		var chatlink = ui.chatlink = new webim.ui.chatlink(null, options).bind("select", function(id){
 			ui.addChat("buddy", id);
 			ui.layout.focusChat("buddy", id);
 		});
@@ -4891,14 +4891,26 @@ app("chatlink", {
 widget("chatlink",
        {
 	       re_link: [/space\.php\?uid=(\d+)$/i, /space\-(\d+)\.html$/i, /space\-uid\-(\d+)\.html$/i, /\?mod=space&uid=(\d+)$/, /\?(\d+)$/],
+	       re_space: [/space\.php\?uid=(\d+)$/i, /space\-(\d+)\.html$/i, /space\-uid\-(\d+)\.html$/i, /\?mod=space&uid=(\d+)/, /\?(\d+)$/],
 	       re_space_class: /spacemenu_list|line_list|xl\sxl2\scl/i,
-	       re_space_id: /profile_act/i
+	       re_space_id: /profile_act/i,
+	       wrap_link: null,
+	       wrap_space: null
        },
        {
 	       _init: function(){
-		       var self = this, element = self.element, list = self.list = {}, options = self.options, anthors = self.anthors = {}, re = options.re_link, re_len = re.length, re_space_id = options.re_space_id, re_space_class = options.re_space_class;
-		       function parse_id(link){
+		       var self = this, element = self.element, list = self.list = {}, 
+		       options = self.options, anthors = self.anthors = {}, 
+		       re_link = options.re_link, 
+		       re_space = options.re_space, 
+		       re_space_id = options.re_space_id, 
+		       re_space_class = options.re_space_class, 
+		       wrap_space = options.wrap_space || document, 
+		       wrap_link = options.wrap_link || document;
+
+		       function parse_id(link, re){
 			       if(!link)return false;
+			       var re_len = re.length; 
 			       for(var i = 0; i < re_len; i++){
 				       var ex = re[i].exec(link);
 				       if(ex && ex[1]){
@@ -4907,19 +4919,19 @@ widget("chatlink",
 			       }
 			       return false;
 		       }
-		       var a = document.getElementsByTagName("a"), b;
+		       var a = wrap_link.getElementsByTagName("a"), b;
 
 		       a && each(a, function(i, el){
-			       var id = parse_id(el.href), text = el.innerHTML;
+			       var id = parse_id(el.href, re_link), text = el.innerHTML;
 			       if(id && children(el).length == 0 && text){
 				       anthors[id] ? anthors[id].push(el) :(anthors[id] = [el]);
 				       list[id] = {id: id, name: text};
 			       }
 		       });
-		       var id = parse_id(window.location.href);
+		       var id = parse_id(window.location.href, re_space);
 		       if(id){
-			       list[id] = extend(list[id], {id: id, profile: true});
-			       var els = document.getElementsByTagName("*"), l = els.length, el, className, attr_id;
+			       list[id] = extend(list[id], {id: id});
+			       var els = wrap_space.getElementsByTagName("*"), l = els.length, el, className, attr_id;
 			       for(var i = 0; i < l ; i++){
 				       el = els[i], className = el.className, attr_id = el.id;
 				       if((re_space_class && re_space_class.test(className)) || (re_space_id && re_space_id.test(attr_id)))
