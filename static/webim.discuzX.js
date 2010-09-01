@@ -1,12 +1,12 @@
 /*!
- * Webim v1.0.0
+ * Webim v1.0.1
  * http://www.webim20.cn/
  *
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 28 19:43:13 2010 +0800
- * Commit: 79741a1eb92f3c500f7e09ceb6437cb45b74a244
+ * Date: Wed Sep 1 17:13:22 2010 +0800
+ * Commit: d3492ede87d66f9e785f291d5471e4f8bd0ff5d0
  */
 (function(window, document, undefined){
 
@@ -991,7 +991,7 @@ extend(webim.prototype, objectExtend,{
 		self.data = {user: user};
 		self.status = new webim.status();
 		self.setting = new webim.setting();
-		self.buddy = new webim.buddy(null, {loadDelay: !self.status.get("b")});
+		self.buddy = new webim.buddy(null, {active: self.status.get("b")});
 		self.room = new webim.room(null, {user: user});
 		self.history = new webim.history(null, {user: user});
 		self.connection = new comet(null,{jsonp:true});
@@ -1012,17 +1012,11 @@ extend(webim.prototype, objectExtend,{
 	_go: function(){
 		var self = this, data = self.data, history = self.history, buddy = self.buddy, room = self.room;
 		history.option("userInfo", data.user);
-		var ids = [], buddies = [];
+		var ids = [];
 		each(data.buddies, function(n, v){
-			if(v.need_reload){
-				ids.push(v.id);
-			}else{
-				buddies.push(v);
-			}
 			history.init("unicast", v.id, v.history);
 		});
-		buddy.online(ids);
-		buddy.handle(buddies);
+		buddy.handle(data.buddies);
 		//rooms
 		each(data.rooms, function(n, v){
 			history.init("multicast", v.id, v.history);
@@ -1067,7 +1061,7 @@ extend(webim.prototype, objectExtend,{
 			self._stop("disconnect");
 		});
 		self.bind("message", function(data){
-			var online_ids = [], l = data.length, uid = self.data.user.id, v, id, type;
+			var online_buddies = [], l = data.length, uid = self.data.user.id, v, id, type;
 			//When revice a new message from router server, make the buddy online.
 			for(var i = 0; i < l; i++){
 				v = data[i];
@@ -1075,25 +1069,21 @@ extend(webim.prototype, objectExtend,{
 				id = type == "unicast" ? (v.to == uid ? v.from : v.to) : v.to;
 				v["id"] = id;
 				if(type == "unicast" && !v["new"]){
-					online_ids.push(id);
+					online_buddies.push({id: id, presence: "online"});
 				}
 			}
-			if(online_ids.length)buddy.online(online_ids);
+			if(online_buddies.length)buddy.presence(online_buddies);
 			history.handle(data);
 		});
-		function grepOffline(msg){
-			return msg.type == "offline";
+		function mapFrom(a){ 
+			var d = {id: a.from, presence: a.type}; 
+			if(a.show)d.show = a.show;
+			if(a.nick)d.nick = a.nick;
+			return d;
 		}
-		function grepOnline(msg){
-			return msg.type == "online";
-		}
-		function mapFrom(a){ return a.from; }
 
 		self.bind("presence",function(data){
-			offline = grep(data, grepOffline);
-			online = grep(data, grepOnline);
-			buddy.online(map(online, mapFrom));
-			buddy.offline(map(offline, mapFrom));
+			buddy.presence(map(data, mapFrom));
 			//online.length && buddyUI.notice("buddyOnline", online.pop()["nick"]);
 		});
 	},
@@ -1227,7 +1217,7 @@ function model(name, defaults, proto){
 window.webim = webim;
 
 extend(webim,{
-	version:"1.0.0",
+	version:"1.0.1",
 	defaults:{
 		urls:{
 			online: "webim/online",
@@ -1363,24 +1353,22 @@ model("status",{
 	}
 });
 
-/*
-buddy //联系人
-attributes：
-data []所有信息 readonly 
-methods:
-get(id)
-handle(data) //handle data and distribute events
-online(ids) // 
-loadDelay()
-offline(ids)
-update(ids) 更新用户信息 有更新时触发events:update
+/**
+ * buddy //联系人
+ * attributes：
+ * 	data []所有信息 readonly 
+ * methods:
+ * 	get(id)
+ * 	handle(data) //handle data and distribute events
+ * 	presence(data) //handle buddy presence.
+ * 	complete() //Complete info.
+ * 	update(ids) 更新用户信息 有更新时触发events:update
 
-events:
-online  //  data:[]
-onlineDelay
-offline  //  data:[]
-update 
-*/
+ * events:
+ * 	online  //  data:[]
+ * 	offline  //  data:[]
+ * 	update 
+ */
 
 model("buddy", {
 	url:"/webim/buddy"
@@ -1389,17 +1377,15 @@ model("buddy", {
 		var self = this;
 		self.data = self.data || [];
 		self.dataHash = {};
-		self._cacheData = {};
 		self.handle(self.data);
 	},
 	clear:function(){
 		var self =this;
 		self.data = [];
 		self.dataHash = {};
-		self._cacheData = {};
 	},
 	count: function(conditions){
-		var data = extend({}, this.dataHash, this._cacheData), count = 0, t;
+		var data = this.dataHash, count = 0, t;
 		for(var key in data){
 			if(isObject(conditions)){
 				t = true;
@@ -1416,63 +1402,26 @@ model("buddy", {
 	get: function(id){
 		return this.dataHash[id];
 	},
-	online: function(ids){
-		this.changeStatus(ids, "online", true);
-	},
-	offline: function(ids){
-		this.changeStatus(ids, "offline", false);
-	},
-	loadDelay: function(){
-		var self = this, cache = self._cacheData, cache_ids = [];
-		for(var key in cache){
-			cache_ids.push(key);
+	complete: function(){
+		var self = this, data = self.dataHash, ids = [], v;
+		for(var key in data){
+			v = data[key];
+			if(v.incomplete && v.presence == 'online')ids.push(key);
 		}
-		self.load(cache_ids);
+		self.load(ids);
 	},
 	update: function(ids){
 		this.load(ids);
 	},
-	changeStatus:function(ids, type, needLoad){
-		ids = idsArray(ids);
-		var l = ids.length;
-		if(l){
-			var self = this, cache = self._cacheData, dataHash = self.dataHash, statusData = [], id, delayData = [], dd;
-			for(var i = 0; i < l; i++){
-				id = ids[i];
-				if(dataHash[id]){
-					statusData.push({id:id, presence:type});
-				}
-				else{
-					dd = {id:id, presence:type};
-					if(!cache[id] || cache[id].presence != type)delayData.push(dd);
-					if(needLoad){
-						cache[id] = dd;
-					}else{
-						if(cache[id])
-							delete cache[id];
-					}
-				}
-
-			}
-			self.handle(statusData);
-			if(needLoad && !self.options.loadDelay)self.loadDelay();
-			else if(delayData.length){
-				if(needLoad)self.trigger(type + "Delay", [delayData]);
-				else self.trigger(type , [delayData]);
-			}
-		}
-
-	},
-	_loadSuccess:function(data){
-		var self = this.self || this, cache = self._cacheData, l = data.length, value , id;
-		//for(var i = 0; i < l; i++){
+	presence: function(data){
+		var self = this, dataHash = self.dataHash;
+		data = isArray(data) ? data : [data];
+		//Complete presence info.
 		for(var i in data){
-			value = data[i];
-			id = value["id"];
-			if(cache[id]){
-				extend(value, cache[id]);
-				delete cache[id];
-			}
+			var v = data[i];
+			//Presence in [show,offline,online]
+			v.presence = v.presence == "offline" ? "offline" : "online";
+			v.incomplete = !dataHash[v.id];
 		}
 		self.handle(data);
 	},
@@ -1487,11 +1436,11 @@ model("buddy", {
 				dataType: "json",
 				data:{ ids: ids.join(",")},
 				context: self,
-				success: self._loadSuccess
+				success: self.handle
 			});
 		}
 	},
-	handle:function(addData){
+	handle: function(addData){
 		var self = this, data = self.data, dataHash = self.dataHash, status = {};
 		addData = addData || [];
 		var l = addData.length , v, type, add;
@@ -1499,11 +1448,13 @@ model("buddy", {
 		for(var i in addData){
 			v = addData[i], id = v.id;
 			if(id){
-				v.show = v.show ? v.show : (v.presence == "offline" ? "unavailable" : "available");
 				if(!dataHash[id]){
+					v.presence = v.presence || "online";
+					v.show = v.show ? v.show : (v.presence == "offline" ? "unavailable" : "available");
 					dataHash[id] = {};
 					data.push(dataHash[id]);
 				}
+				v.incomplete = !!v.incomplete;
 				add = checkUpdate(dataHash[id], v);
 				if(add){
 					type = add.presence || "update";
@@ -1516,6 +1467,7 @@ model("buddy", {
 		for (var key in status) {
 			self.trigger(key, [status[key]]);
 		}
+		self.options.active && self.complete();
 	}
 });
 /*
@@ -1806,14 +1758,14 @@ model("history",{
 });
 })(window, document);
 /*!
- * Webim UI v3.0.0
+ * Webim UI v3.0.1
  * http://www.webim20.cn/
  *
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 28 19:45:39 2010 +0800
- * Commit: 7ceb7da5074330c9d143065ab255fcadc423c909
+ * Date: Wed Sep 1 18:53:59 2010 +0800
+ * Commit: 5dd0d275972f5c49cf89d3671f950d5fbce6f474
  */
 (function(window,document,undefined){
 
@@ -2637,7 +2589,7 @@ function app(name, events){
 	webimUI.apps[name] = events || {};
 }
 extend(webimUI,{
-	version: "3.0.0",
+	version: "3.0.1",
 	widget: widget,
 	app: app,
 	plugin: plugin,
@@ -3500,13 +3452,13 @@ widget("history",{
 		if (shouldTilte) {
 			self._lastLogItem = logItem;
 			var t = (new date(time));
-			markup.push('<h4 class="ui-state-default"><span class="webim-gray">');
+			markup.push('<h4><span class="webim-gray">');
 			markup.push(t.getDay(true));
 			markup.push(" ");
 			markup.push(t.getTime());
 			markup.push('</span>');
 			markup.push(nick);
-			markup.push('</h4>');
+			markup.push('</h4><hr class="webim-line ui-state-default" />');
 		}
 
 		markup.push('<p>');
@@ -3895,7 +3847,9 @@ widget("chat",{
 		$.userPic.setAttribute("href", info.url);
 		$.userPic.firstChild.setAttribute("defaultsrc", info.default_pic_url ? info.default_pic_url : "");
 		setTimeout(function(){
-		$.userPic.firstChild.setAttribute("src", info.pic_url);
+			if(info.pic_url || info.default_pic_url) {
+				$.userPic.firstChild.setAttribute("src", info.pic_url || info.default_pic_url);
+			}
 		},100);
 		$.userStatus.innerHTML = info.status || "&nbsp";
 		self.window.title(info.nick, info.show);
@@ -4204,7 +4158,7 @@ widget("setting",{
 widget("user",{
 	template: '<div>  \
 		<div id=":user" class="webim-user"> \
-			<a id=":userPic" class="webim-user-pic ui-corner-all ui-state-active" href="#id"><img width="50" height="50" src="about:blank" defaultsrc="" onerror="var d=this.getAttribute(\'defaultsrc\');if(d && this.src!=d)this.src=d;" class="ui-corner-all"></a> \
+			<a id=":userPic" class="webim-user-pic ui-corner-all ui-state-active" href="#id"><img width="50" height="50" defaultsrc="" onerror="var d=this.getAttribute(\'defaultsrc\');if(d && this.src!=d)this.src=d;" class="ui-corner-all"></a> \
 				<div class="webim-user-show"><h4><a  id=":userShowTrigger" href="#show"><strong id=":userNick"></strong><span id=":userShow"><em class="webim-icon webim-icon-unavailable"><%=unavailable%></em><%=unavailable%></span><em class="ui-icon ui-icon-triangle-1-s"><%=show_status_list%></em></a></h4>\
 					<p id=":userShowList" class="ui-state-active ui-corner-all" style="display: none;">\
 						<a href="#available" class="webim-user-show-available"><em class="webim-icon webim-icon-available"><%=available%></em><%=available%></a>\
@@ -4214,7 +4168,7 @@ widget("user",{
 						<a href="#unavailable" class="webim-user-show-unavailable"><em class="webim-icon webim-icon-unavailable"><%=unavailable%></em><%=unavailable%></a>\
 					</p>\
 				</div> \
-					<span id=":userStatus" title="" class="webim-user-status">Hello</span> \
+					<span id=":userStatus" title="" class="webim-user-status"></span> \
 						</div> \
 							</div>'
 },{
@@ -4239,12 +4193,14 @@ widget("user",{
 	update: function(info){
 		var self = this, type = info.show || "unavailable", $ = self.$;
 		self.options.info = info;
-		$.userStatus.innerHTML = info.status || i18n(type);
+		$.userStatus.innerHTML = info.status || "&nbsp;";
 		$.userNick.innerHTML = info.nick || "";
 		$.userPic.setAttribute("href", info.url);
 		$.userPic.firstChild.setAttribute("defaultsrc", info.default_pic_url ? info.default_pic_url : "");
 		setTimeout(function(){
-			$.userPic.firstChild.setAttribute("src", info.pic_url);
+			if(info.pic_url || info.default_pic_url) {
+				$.userPic.firstChild.setAttribute("src", info.pic_url || info.default_pic_url);
+			}
 		},100);
 		self.show(type);
 	},
@@ -4323,31 +4279,34 @@ app("buddy", {
 		});
 		buddyUI.window.bind("displayStateChange",function(type){
 			if(type != "minimize"){
-				buddy.option("loadDelay", false);
+				buddy.option("active", true);
 				im.status.set("b", 1);
-				buddy.loadDelay();
+				buddy.complete();
 			}else{
 				im.status.set("b", 0);
-				buddy.option("loadDelay", true);
+				buddy.option("active", false);
 			}
 		});
+		function count_buddy(){
+			return buddy.count({presence:"online"}) - buddy.count({presence:"online", show: "invisible"});
+		}
+
+		var mapId = function(a){ return isObject(a) ? a.id : a };
+		var grepVisible = function(a){ return a.show != "invisible" && a.presence == "online"};
+		var grepInvisible = function(a){ return a.show == "invisible"; };
 		//some buddies online.
 		buddy.bind("online", function(data){
-			buddyUI.add(data);
-			buddyUI.notice("count", buddy.count({presence:"online"}));
-		});
-		buddy.bind("onlineDelay", function(data){
-			buddyUI.notice("count", buddy.count({presence:"online"}));
+			buddyUI.add(grep(data, grepVisible));
 		});
 		//some buddies offline.
-		var mapId = function(a){ return isObject(a) ? a.id : a };
 		buddy.bind("offline", function(data){
 			buddyUI.remove(map(data, mapId));
-			buddyUI.notice("count", buddy.count({presence:"online"}));
 		});
 		//some information has been modified.
 		buddy.bind("update", function(data){
-			buddyUI.update(data);
+			buddyUI.add(grep(data, grepVisible));
+			buddyUI.update(grep(data, grepVisible));
+			buddyUI.remove(map(grep(data, grepInvisible), mapId));
 		});
 		buddyUI.offline();
 		//user events
@@ -4367,8 +4326,8 @@ app("buddy", {
 	},
 	go: function(){
 		var ui = this, im = ui.im, buddy = im.buddy, buddyUI = ui.buddy;
-		buddyUI.notice("count", buddy.count({presence:"online"}));
 		buddyUI.user.update(im.data.user);
+		buddyUI.titleCount();
 	},
 	stop: function(type){
 		var ui = this, im = ui.im, buddy = im.buddy, buddyUI = ui.buddy;
@@ -4386,8 +4345,8 @@ widget("buddy",{
 					<ul id=":ul"></ul>\
 						</div>\
 							</div>',
-	tpl_group: '<li><h4 class="ui-state-default"><%=title%>(<%=count%>)</h4><ul></ul></li>',
-	tpl_li: '<li title=""><a href="<%=url%>" rel="<%=id%>" class="ui-helper-clearfix"><img width="25" src="<%=pic_url%>" defaultsrc="<%=default_pic_url%>" onerror="var d=this.getAttribute(\'defaultsrc\');if(d && this.src!=d)this.src=d;" /><strong><%=nick%></strong><span><%=status%></span></a></li>'
+	tpl_group: '<li><h4><%=title%>(<%=count%>)</h4><hr class="webim-line ui-state-default" /><ul></ul></li>',
+	tpl_li: '<li title=""><a href="<%=url%>" rel="<%=id%>" class="ui-helper-clearfix"><em class="webim-icon webim-icon-<%=show%>" title="<%=human_show%>"><%=show%></em><img width="25" src="<%=pic_url%>" defaultsrc="<%=default_pic_url%>" onerror="var d=this.getAttribute(\'defaultsrc\');if(d && this.src!=d)this.src=d;" /><strong><%=nick%></strong><span><%=status%></span></a></li>'
 },{
 	_init: function(){
 		var self = this;
@@ -4397,7 +4356,7 @@ widget("buddy",{
 		};
 		self.li_group = {
 		};
-		self._count = 0;
+		self.size = 0;
 		//self._initEvents();
 		self.user = new webimUI.user();
 		self.header = self.user.element;
@@ -4440,15 +4399,15 @@ self.trigger("offline");
 */
 
 	},
-	_titleCount: function(){
-		var self = this, _count = self._count, win = self.window, empty = self.$.empty, element = self.element;
-		win && win.title(i18n("buddy") + "(" + (_count ? _count : "0") + ")");
-		if(!_count){
+	titleCount: function(){
+		var self = this, size = self.size, win = self.window, empty = self.$.empty, element = self.element;
+		win && win.title(i18n("buddy") + "(" + (size ? size : "0") + ")");
+		if(!size){
 			show(empty);
 		}else{
 			hide(empty);
 		}
-		if(_count > 8){
+		if(size > 8){
 			self.scroll(true);
 		}else{
 			self.scroll(false);
@@ -4464,7 +4423,7 @@ self.trigger("offline");
 		//	win && win.title(subVisibleLength(name, 0, 8) + " " + i18n("online"));
 		if(self._time) clearTimeout(self._time);
 		self._time = setTimeout(function(){
-			self._titleCount();
+			self.titleCount();
 		}, 5000);
 	},
 	_title: function(type){
@@ -4473,15 +4432,11 @@ self.trigger("offline");
 			win.title(i18n("buddy") + "[" + i18n(type) + "]");
 		}
 	},
-	notice: function(type, nameOrCount){
+	notice: function(type, name){
 		var self = this;
 		switch(type){
 			case "buddyOnline":
-				self._titleBuddyOnline(nameOrCount);
-			break;
-			case "count":
-				self._count = nameOrCount;
-			self._titleCount();
+				self._titleBuddyOnline(name);
 			break;
 			default:
 				self._title(type);
@@ -4503,18 +4458,29 @@ self.trigger("offline");
 		el = el.firstChild;
 		el.setAttribute("href", info.url);
 		el = el.firstChild;
+		var show = info.show ? info.show : "available";
+		el.className = "webim-icon webim-icon-" + show;
+		el.setAttribute("title", i18n(show));
+		el = el.nextSibling;
 		el.setAttribute("defaultsrc", info.default_pic_url ? info.default_pic_url : "");
-		el.setAttribute("src", info.pic_url);
+		if(info.pic_url || info.default_pic_url) {
+			el.setAttribute("src", info.pic_url || info.default_pic_url);
+		}
 		el = el.nextSibling;
 		el.innerHTML = info.nick;
 		el = el.nextSibling;
-		el.innerHTML = info.status;
+		el.innerHTML = info.status || "&nbsp;";
 		return el;
 	},
 	_addOne:function(info, end){
 		var self = this, li = self.li, id = info.id, ul = self.$.ul;
 		if(!li[id]){
+			self.size++;
 			if(!info.default_pic_url)info.default_pic_url = "";
+			info.status = info.status || "&nbsp;";
+			info.show = info.show || "available";
+			info.human_show = i18n(info.show);
+			info.pic_url = info.pic_url || "";
 			var el = li[id] = createElement(tpl(self.options.tpl_li, info));
 			//self._updateInfo(el, info);
 			var a = el.firstChild;
@@ -4562,6 +4528,7 @@ self.trigger("offline");
 		for(var i=0; i < data.length; i++){
 			this._addOne(data[i], end);
 		}
+		this.titleCount();
 	},
 	removeAll: function(){
 		var ids = [], li = this.li;
@@ -4569,14 +4536,16 @@ self.trigger("offline");
 			ids.push(k);
 		}
 		this.remove(ids);
+		this.titleCount();
 	},
 	remove: function(ids){
-		var id, el, li = this.li, group, li_group = this.li_group;
+		var self = this, id, el, li = self.li, group, li_group = self.li_group;
 		ids = idsArray(ids);
 		for(var i=0; i < ids.length; i++){
 			id = ids[i];
 			el = li[id];
 			if(el){
+				self.size--;
 				group = li_group[id];
 				if(group){
 					group.count --;
@@ -4587,6 +4556,7 @@ self.trigger("offline");
 				delete(li[id]);
 			}
 		}
+		self.titleCount();
 	},
 	select: function(id){
 		var self = this, el = self.li[id];
@@ -4685,6 +4655,7 @@ widget("room",{
 },{
 	_init: function(){
 		var self = this;
+		self.size = 0;
 		self.li = {
 		};
 		self._count = 0;
@@ -4731,6 +4702,7 @@ widget("room",{
 	},
 	_addOne:function(info, end){
 		var self = this, li = self.li, id = info.id, ul = self.$.ul;
+		self.size++;
 		if(!li[id]){
 			if(!info.default_pic_url)info.default_pic_url = "";
 			var el = li[id] = createElement(tpl(self.options.tpl_li, info));
@@ -4755,10 +4727,14 @@ widget("room",{
 		}
 	},
 	add: function(data){
-		hide(this.$.empty);
+		var self = this;
+		hide(self.$.empty);
 		data = makeArray(data);
 		for(var i=0; i < data.length; i++){
-			this._addOne(data[i]);
+			self._addOne(data[i]);
+		}
+		if(self.size > 8){
+			self.scroll(true);
 		}
 	},
 	removeAll: function(){
@@ -4864,6 +4840,158 @@ widget("menu",{
 	destroy: function(){
 	}
 });
+/* 
+* ui.chatlink
+*
+* Notice: chatlink use user_id
+*
+* TODO: 支持群组Link
+*
+* options:
+* methods:
+* 	add(buddies)
+* 	remove(buddies)
+* 	idsArray()
+* 	removeAll()
+* 	destroy()
+* 
+* events: 
+* 	select
+* 
+*/
+
+app("chatlink", {
+	init: function(options){
+		var ui = this, im = ui.im;
+		var chatlink = ui.chatlink = new webim.ui.chatlink(null).bind("select", function(id){
+			ui.addChat("buddy", id);
+			ui.layout.focusChat("buddy", id);
+		});
+		var grepVisible = function(a){ return a.show != "invisible" && a.presence == "online"};
+		var grepInvisible = function(a){ return a.show == "invisible" };
+		im.buddy.bind("online",function(data){
+			chatlink.add(grep(data, grepVisible));
+		}).bind("update",function(data){
+			chatlink.add(grep(data, grepVisible));
+			chatlink.remove(grep(data, grepInvisible));
+		}).bind("offline",function(data){
+			chatlink.remove(data);
+		});
+	},
+	ready: function(params){
+		params.stranger_ids = this.chatlink.idsArray();
+	},
+	go: function(){
+		this.chatlink.remove(this.im.data.user);
+	},
+	stop: function(){
+		this.chatlink.removeAll();
+	}
+});
+widget("chatlink",
+       {
+	       re_link: [/space\.php\?uid=(\d+)$/i, /space\-(\d+)\.html$/i, /space\-uid\-(\d+)\.html$/i, /\?mod=space&uid=(\d+)$/, /\?(\d+)$/],
+	       re_space_class: /spacemenu_list|line_list|xl\sxl2\scl/i,
+	       re_space_id: /profile_act/i
+       },
+       {
+	       _init: function(){
+		       var self = this, element = self.element, list = self.list = {}, options = self.options, anthors = self.anthors = {}, re = options.re_link, re_len = re.length, re_space_id = options.re_space_id, re_space_class = options.re_space_class;
+		       function parse_id(link){
+			       if(!link)return false;
+			       for(var i = 0; i < re_len; i++){
+				       var ex = re[i].exec(link);
+				       if(ex && ex[1]){
+					       return ex[1];
+				       }
+			       }
+			       return false;
+		       }
+		       var a = document.getElementsByTagName("a"), b;
+
+		       a && each(a, function(i, el){
+			       var id = parse_id(el.href), text = el.innerHTML;
+			       if(id && children(el).length == 0 && text){
+				       anthors[id] ? anthors[id].push(el) :(anthors[id] = [el]);
+				       list[id] = {id: id, name: text};
+			       }
+		       });
+		       var id = parse_id(window.location.href);
+		       if(id){
+			       list[id] = extend(list[id], {id: id, profile: true});
+			       var els = document.getElementsByTagName("*"), l = els.length, el, className, attr_id;
+			       for(var i = 0; i < l ; i++){
+				       el = els[i], className = el.className, attr_id = el.id;
+				       if((re_space_class && re_space_class.test(className)) || (re_space_id && re_space_id.test(attr_id)))
+					       {
+						       el = children(el);
+						       if(el.length){
+							       el = el[el.length - 1];
+							       anthors[id] ? anthors[id].push(el) :(anthors[id] = [el]);
+						       }
+						       break;
+					       }
+			       }
+		       }
+	       },
+	       _temp:function(attr){
+		       var self = this;
+		       var el = createElement(tpl('<a id="<%=id%>" href="#chat" title="<%=title%>" class="webim-chatlink"><%=text%></a>', attr));
+		       addEvent(el, "click", function(e){
+			       self.trigger("select", this.id);
+			       stopPropagation(e);
+			       preventDefault(e);
+		       });
+		       return el;
+	       },
+	       idsArray: function(){
+		       var _ids = [];
+		       each(this.list, function(k,v){_ids.push(k)});
+		       return _ids;
+	       },
+	       add: function(data){
+		       var self = this, list = self.list, anthors = self.anthors, l = data.length, i, da, uid, li, anthor;
+		       for(i = 0; i < l; i++){
+			       da = data[i];
+			       if(da.id && (uid = da.uid) && (li = list[uid])){
+				       anthor = anthors[uid];
+				       if(!li.elements && anthor){
+					       li.elements = [];
+					       for(var j = 0; j < anthor.length; j++){
+						       if(anthor[j].tagName.toLowerCase() == "li"){
+							       li.elements[j] = document.createElement("li");
+							       li.elements[j].appendChild(self._temp({id: da.id, title: "", text: i18n('chat with me')}));
+						       }else{
+							       li.elements[j] = self._temp({id: da.id, title: i18n('chat with',{name: li.name}), text: ""});
+						       }
+					       }
+				       }
+				       anthor && each(anthor, function(n, v){
+					       v.parentNode.insertBefore(li.elements[n], v.nextSibling);
+				       });
+			       }
+		       }
+	       },
+	       remove: function(data){
+		       var self = this, list = self.list, anthors = self.anthors, l = data.length, i, da, uid, li, anthor;
+		       for(i = 0; i < l; i++){
+			       da = data[i];
+			       if(da.id && (uid = da.uid) && (li = list[uid])){
+				       li.elements && each(li.elements, function(n, v){
+					       remove(v);
+				       });
+			       }
+		       }
+	       },
+	       removeAll: function(){
+		       each(this.list, function(k, v){
+			       v.elements && each(v.elements, function(n, el){
+				       remove(el);
+			       });
+		       });
+	       }
+       }
+      );
 /**/
 /*
 notification //
@@ -4961,9 +5089,9 @@ widget("notification",{
 	},
 	_li_tpl: function(data){
 		return tpl(this.options.tpl_li, {
-			text: text,
-			link: link,
-			target: isExtlink ? "_blank" : ""
+			text: data.text,
+			link: data.link,
+			target: data.isExtlink ? "_blank" : ""
 		});
 	},
 	_fitUI:function(){

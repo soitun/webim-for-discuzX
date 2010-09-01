@@ -1,12 +1,12 @@
 /*!
- * Webim UI v3.0.0
+ * Webim UI v3.0.1
  * http://www.webim20.cn/
  *
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Aug 28 19:45:39 2010 +0800
- * Commit: 7ceb7da5074330c9d143065ab255fcadc423c909
+ * Date: Wed Sep 1 18:53:59 2010 +0800
+ * Commit: 5dd0d275972f5c49cf89d3671f950d5fbce6f474
  */
 
 body {
@@ -57,12 +57,20 @@ body {
         height:16px;
         width:16px;
 }
+
 a .webim-icon, a .ui-icon{
 		cursor: pointer;
 }
 
+.webim-line{
+        background: none;
+        border-width: 1px 0 0 !important;
+	height: 0px;
+	*margin: -7px 0;
+	display:block;
+}
 /*
- * jQuery UI CSS Framework 3.0.0
+ * jQuery UI CSS Framework 3.0.1
  *
  * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -213,9 +221,6 @@ a .webim-icon, a .ui-icon{
         padding: 0 .4em;
 }
 .webim .webim-history h4{
-        background:none;
-        border-width: 0;
-        border-bottom-width: 1px;
         margin-top: .1em;
         padding: .2em .3em .1em;
         font-weight: normal;
@@ -844,6 +849,12 @@ a .webim-icon, a .ui-icon{
         margin-left:3em;
         padding: .3em 0;
 }
+
+#webim-buddy ul li .webim-icon{
+	float: right;
+	margin: 2px;
+}
+
 #webim-buddy ul li a img{
         display:block;
         float:left;
@@ -987,6 +998,14 @@ a .webim-icon, a .ui-icon{
 .webim-menu ul li span{
         padding: 0 .4em;
 }
+.webim-chatlink{
+	cursor:pointer;
+	padding-left: 1.2em;
+	background:url(images/chat_online.gif) no-repeat 2px center;
+	display:inline;
+	*display:inline-block;
+}
+
 .webim-notification {
         padding:1em .5em;
         overflow-x: hidden;
@@ -1005,4 +1024,8 @@ a .webim-icon, a .ui-icon{
 .webim-notification ul li{
         overflow: hidden;
         padding:.1em 0;
+}
+#pcd .webim-chatlink{
+	padding: 0;
+	background: none;
 }
