@@ -173,9 +173,9 @@ function history($type, $id){
 	$list = array();
 	if($type == "unicast"){
 		$query = DB::query("SELECT * FROM ".DB::table('webim_histories')." 
-			WHERE `send` = 1 AND `type` = 'unicast' 
+			WHERE `type` = 'unicast' 
 			AND ((`to`='$id' AND `from`='$user_id' AND `fromdel` != 1) 
-			OR (`from`='$id' AND `to`='$user_id' AND `todel` != 1))  
+			OR (`send` = 1 AND `from`='$id' AND `to`='$user_id' AND `todel` != 1))  
 			ORDER BY timestamp DESC LIMIT 30");
 		while ($value = DB::fetch($query)){
 			array_unshift($list, log_item($value));
