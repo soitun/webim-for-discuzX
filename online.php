@@ -23,6 +23,7 @@ $im = new WebIM($user, null, $_IMC['domain'], $_IMC['apikey'], $_IMC['host'], $_
 $im_buddies = array();//For online.
 $im_rooms = array();//For online.
 
+$strangers = ids_array(gp('stranger_ids'));
 
 $cache_buddies = array();//For find.
 $cache_rooms = array();//For find.
@@ -57,8 +58,8 @@ foreach($active_buddies as $k => $v){
 		$buddies_without_info[] = $v;
 	}
 }
-if(!empty($buddies_without_info)){
-	foreach(buddy(implode(",", $buddies_without_info)) as $k => $v){
+if(!empty($buddies_without_info) || !empty($strangers)){
+	foreach(buddy(implode(",", $buddies_without_info), implode(",", $strangers)) as $k => $v){
 		$id = $v->id;
 		$im_buddies[] = $id;
 		$v->presence = "offline";
@@ -128,6 +129,20 @@ if($data->success){
 			$o[] = $cache_buddies[$id];
 		}
 	}
+
+	//Provide history for active buddies and rooms
+	foreach($active_buddies as $id){
+		if(isset($cache_buddies[$id])){
+			$cache_buddies[$id]->history = history("unicast", $id);
+		}
+	}
+	foreach($active_rooms as $id){
+		if(isset($cache_rooms[$id])){
+			$cache_rooms[$id]->history = history("multicast", $id);
+		}
+	}
+
+
 	$show_buddies = $o;
 	$data->buddies = $show_buddies;
 
