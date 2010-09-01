@@ -99,13 +99,25 @@ function online_buddy(){
  * 	buddy('admin,webim,test');
  *
  */
-function buddy($ids){
+
+function buddy($names, $uids = null){
 	global $friend_groups, $user;
-	$ids = "'".implode("','", explode(",", $ids))."'";
+	$where_name = "";
+	$where_uid = "";
+	if(!$names and !$uids)return array();
+	if($names){
+		$names = "'".implode("','", explode(",", $names))."'";
+		$where_name = "m.username IN ($names)";
+	}
+	if($uids){
+		$where_uid = "m.uid IN ($uids)";
+	}
+	$where_sql = $where_name && $where_uid ? "($where_name OR $where_uid)" : ($where_name ? $where_name : $where_uid);
+
 	$list = array();
 	$query = DB::query("SELECT m.uid, m.username, f.gid FROM ".DB::table('common_member')." m
 		LEFT JOIN (SELECT * FROM ".DB::table('home_friend')." WHERE uid = $user->uid) f ON f.fuid = m.uid
-		WHERE m.username IN ($ids) AND m.uid <> $user->uid");
+		WHERE m.uid <> $user->uid AND $where_sql");
 	while ($value = DB::fetch($query)){
 		$list[] = (object)array(
 			"uid" => $value['uid'],
