@@ -116,7 +116,8 @@ function buddy($names, $uids = null){
 
 	$list = array();
 	$query = DB::query("SELECT m.uid, m.username, f.gid FROM ".DB::table('common_member')." m
-		LEFT JOIN (SELECT * FROM ".DB::table('home_friend')." WHERE uid = $user->uid) f ON f.fuid = m.uid
+		LEFT JOIN ".DB::table('home_friend')." f 
+		ON f.fuid = m.uid AND f.uid = $user->uid
 		WHERE m.uid <> $user->uid AND $where_sql");
 	while ($value = DB::fetch($query)){
 		$list[] = (object)array(
@@ -139,13 +140,14 @@ function buddy($names, $uids = null){
 
 function room($ids=null){
 	global $user;
-	if($ids){
-		$ids = "'".implode("','", explode(",", $ids))."'";
-		$where = "f.fid = ($ids)";
-	}else{
-		$where = "f.fid IN (SELECT fid FROM ".DB::table("forum_groupuser")." WHERE uid=$user->uid)";
+	if(!$ids){
+		$ids = DB::result_first("SELECT fid FROM ".DB::table("forum_groupuser")." WHERE uid=$user->uid");
 	}
 	$list = array();
+	if(!$ids){
+		return $list;
+	}
+	$where = "f.fid IN ($ids)";
 	$query = DB::query("SELECT f.fid, f.name, ff.icon, ff.membernum, ff.description 
 		FROM ".DB::table('forum_forum')." f 
 		LEFT JOIN ".DB::table("forum_forumfield")." ff ON ff.fid=f.fid 
