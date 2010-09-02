@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Wed Sep 1 17:13:22 2010 +0800
- * Commit: d3492ede87d66f9e785f291d5471e4f8bd0ff5d0
+ * Date: Thu Sep 2 10:54:29 2010 +0800
+ * Commit: e84be198aee5928257a6434c3fd4c55828dab585
  */
 (function(window, document, undefined){
 
@@ -1072,7 +1072,11 @@ extend(webim.prototype, objectExtend,{
 					online_buddies.push({id: id, presence: "online"});
 				}
 			}
-			if(online_buddies.length)buddy.presence(online_buddies);
+			if(online_buddies.length){
+				buddy.presence(online_buddies);
+				//the chat window will pop out, need complete info
+				buddy.complete();
+			}
 			history.handle(data);
 		});
 		function mapFrom(a){ 
@@ -1764,8 +1768,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 2 10:28:11 2010 +0800
- * Commit: bbac259f9ee95343bdb8f7962687b5641fb036e9
+ * Date: Thu Sep 2 10:55:09 2010 +0800
+ * Commit: 2068c1d3706c9f3803770e4eb8a0de3077a68edc
  */
 (function(window,document,undefined){
 
