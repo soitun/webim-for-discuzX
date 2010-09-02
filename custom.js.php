@@ -55,10 +55,10 @@ $setting = json_encode(setting());
 	ui.addApp("notification");
 	ui.addApp("setting", {"data": webim.setting.defaults.data});
 	if(<?php echo var_export(!$_IMC['disable_chatlink']) ?>)ui.addApp("chatlink", {
-		re_space: [/mod=space&uid=(\d+)/i, /space\-uid\-(\d+)\.html$/i],
-		re_space_class: /xl\sxl2\scl/,
-		re_space_id: null,
-		wrap_link: document.getElementById("ct")
+		space_href: [/mod=space&uid=(\d+)/i, /space\-uid\-(\d+)\.html$/i],
+		space_class: /xl\sxl2\scl/,
+		space_id: null,
+		link_wrap: document.getElementById("ct")
 	});
 	ui.render();
 	im.autoOnline() && im.online();
