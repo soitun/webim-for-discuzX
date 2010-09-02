@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 2 10:55:09 2010 +0800
- * Commit: 2068c1d3706c9f3803770e4eb8a0de3077a68edc
+ * Date: Thu Sep 2 17:14:42 2010 +0800
+ * Commit: 22f8e73ebf7f440a3925874c5daad65ab6656179
  */
 
 body {
@@ -780,6 +780,7 @@ a .webim-icon, a .ui-icon{
 #webim-buddy .webim-buddy-search input{
         border: none;
         background: none;
+	color: inherit;
 	display: block;
 	width:95%;
         padding: .2em;
@@ -886,6 +887,7 @@ a .webim-icon, a .ui-icon{
         border: none;
         background: none;
 	display: block;
+	color: inherit;
 	width:95%;
         padding: .2em;
 	/*
@@ -1025,7 +1027,14 @@ a .webim-icon, a .ui-icon{
         overflow: hidden;
         padding:.1em 0;
 }
+/*discuz X1*/
 #pcd .webim-chatlink{
-	padding: 0;
-	background: none;
+	padding-left: 0;
+	background-position: -30px 0;
+}
+
+/*discuz X1.5*/
+#pcd .ul_list .webim-chatlink{
+	background-position: 0px center;
+	padding-left: 20px;
 }
