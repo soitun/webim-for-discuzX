@@ -9,6 +9,7 @@
 if(!defined('IN_DISCUZ') || !defined('IN_ADMINCP')) {
 	exit('Access Denied');
 }
+require_once(dirname(__FILE__) . "/lib/util.php");
 
 //$sl = $scriptlang['webim'];
 $tl = $templatelang['webim'];
@@ -33,7 +34,7 @@ echo $notice;
 showtips($tl['themes_tips']);
 
 $path = dirname(__FILE__).DIRECTORY_SEPARATOR."static".DIRECTORY_SEPARATOR."themes";
-$files = scandir($path);
+$files = scan_subdir($path);
 $html = '<ul id="themes">';
 foreach ($files as $k => $v){
 	$t_path = $path.DIRECTORY_SEPARATOR.$v;
