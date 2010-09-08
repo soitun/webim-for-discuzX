@@ -64,7 +64,7 @@ webim.ui.i18n.store('zh-CN',{
 	"blocked": "\u5df2\u5c4f\u853d",
 	"block group": "\u5c4f\u853d\u6765\u81ea{{name}}\u7684\u6d88\u606f",
 	"unblock group": "\u53d6\u6d88\u5c4f\u853d",
-	"empty buddy": "\u6ca1\u6709\u597d\u53cb\u5728\u7ebf",
+	"empty buddy": "\u6ca1\u6709\u8054\u7cfb\u4eba\u5728\u7ebf",
 	"empty room": "\u672a\u52a0\u5165\u4efb\u4f55\u7fa4\u7ec4",
 	"empty menu": "\u6ca1\u6709\u5de5\u5177",
 	"empty notification": "\u7a7a",
@@ -78,7 +78,10 @@ webim.ui.i18n.store('zh-CN',{
 	"dnd": "\u5fd9\u788c",
 	"away": "\u79bb\u5f00",
 	"invisible": "\u9690\u8eab",
-	"unavailable": "\u79bb\u7ebf"
+	"unavailable": "\u79bb\u7ebf",
+	"online support": "\u5728\u7ebf\u652f\u6301",
+	"location": "\u6b63\u5728",
+	"from": "\u6765\u81ea"
 });
 
 webim.ui.i18n.store('zh-CN',{

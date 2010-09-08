@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 2 10:54:29 2010 +0800
- * Commit: e84be198aee5928257a6434c3fd4c55828dab585
+ * Date: Wed Sep 8 12:52:56 2010 +0800
+ * Commit: 615d6d3228182b62b6f21a3bfddd13996a6f375c
  */
 (function(window, document, undefined){
 
@@ -974,6 +974,8 @@ log.disable = function(){
 * 	message
 * 	presence
 * 	status
+*
+* 	sendMsg
 */
 
 
@@ -985,15 +987,19 @@ function webim(element, options){
 
 extend(webim.prototype, objectExtend,{
 	_init: function(){
-		var self = this;
+		var self = this, options = self.options;
 		//Default user status info.
 		var user = {presence: 'offline', show: 'unavailable'};
+		if(options.jsonp)
+			self.request = jsonp;
+		else
+			self.request = ajax;
 		self.data = {user: user};
 		self.status = new webim.status();
-		self.setting = new webim.setting();
-		self.buddy = new webim.buddy(null, {active: self.status.get("b")});
-		self.room = new webim.room(null, {user: user});
-		self.history = new webim.history(null, {user: user});
+		self.setting = new webim.setting(null, {jsonp: options.jsonp});
+		self.buddy = new webim.buddy(null, {active: self.status.get("b"), jsonp: options.jsonp});
+		self.room = new webim.room(null, {user: user, jsonp: options.jsonp});
+		self.history = new webim.history(null, {user: user, jsonp: options.jsonp});
 		self.connection = new comet(null,{jsonp:true});
 		self._initEvents();
 		//self.online();
@@ -1069,7 +1075,10 @@ extend(webim.prototype, objectExtend,{
 				id = type == "unicast" ? (v.to == uid ? v.from : v.to) : v.to;
 				v["id"] = id;
 				if(type == "unicast" && !v["new"]){
-					online_buddies.push({id: id, presence: "online"});
+					var msg = {id: id, presence: "online"};
+					//update nick.
+					if(v.nick)msg.nick = v.nick;
+					online_buddies.push(msg);
 				}
 			}
 			if(online_buddies.length){
@@ -1083,6 +1092,7 @@ extend(webim.prototype, objectExtend,{
 			var d = {id: a.from, presence: a.type}; 
 			if(a.show)d.show = a.show;
 			if(a.nick)d.nick = a.nick;
+			if(a.status)d.status = a.status;
 			return d;
 		}
 
@@ -1100,7 +1110,8 @@ extend(webim.prototype, objectExtend,{
 	sendMsg: function(msg){
 		var self = this;
 		msg.ticket = self.data.connection.ticket;
-		ajax({
+		self.trigger("sendMsg",[msg]);
+		self.request({
 			type: 'post',
 			url: self.options.urls.message,
 			cache: false,
@@ -1110,7 +1121,7 @@ extend(webim.prototype, objectExtend,{
 	sendStatus: function(msg){
 		var self = this;
 		msg.ticket = self.data.connection.ticket;
-		ajax({
+		self.request({
 			type: 'post',
 			url: self.options.urls.status,
 			cache: false,
@@ -1120,8 +1131,10 @@ extend(webim.prototype, objectExtend,{
 	sendPresence: function(msg){
 		var self = this;
 		msg.ticket = self.data.connection.ticket;
+		//save show status
+		self.data.user.show = msg.show;
 		self.status.set("s", msg.show);
-		ajax({
+		self.request({
 			type: 'post',
 			url: self.options.urls.presence,
 			cache: false,
@@ -1152,7 +1165,7 @@ extend(webim.prototype, objectExtend,{
 		status.set("o", false);
 		status.set("s", params.show);
 
-		ajax({
+		self.request({
 			type:"post",
 			dataType: "json",
 			data: params,
@@ -1176,7 +1189,7 @@ extend(webim.prototype, objectExtend,{
 		self.status.set("o", true);
 		self.connection.close();
 		self._stop("offline");
-		ajax({
+		self.request({
 			type: 'post',
 			url: self.options.urls.offline,
 			type: 'post',
@@ -1191,7 +1204,7 @@ extend(webim.prototype, objectExtend,{
 	_refresh:function(){
 		var self = this, data = self.data;
 		if(!data || !data.connection || !data.connection.ticket) return;
-		ajax({
+		self.request({
 			type: 'post',
 			url: self.options.urls.refresh,
 			type: 'post',
@@ -1273,6 +1286,10 @@ model("setting",{
 },{
 	_init:function(){
 		var self = this;
+		if(self.options.jsonp)
+			self.request = jsonp;
+		else
+			self.request = ajax;
 		self.data = extend({}, self.options.data, self.data);
 	},
 	get: function(key){
@@ -1293,7 +1310,7 @@ model("setting",{
 			});
 			var _new = extend({}, _old, options);
 			self.data = _new;
-			ajax({
+			self.request({
 				type: 'post',
 				url: self.options.url,
 				dataType: 'json',
@@ -1379,6 +1396,10 @@ model("buddy", {
 }, {
 	_init: function(){
 		var self = this;
+		if(self.options.jsonp)
+			self.request = jsonp;
+		else
+			self.request = ajax;
 		self.data = self.data || [];
 		self.dataHash = {};
 		self.handle(self.data);
@@ -1410,7 +1431,11 @@ model("buddy", {
 		var self = this, data = self.dataHash, ids = [], v;
 		for(var key in data){
 			v = data[key];
-			if(v.incomplete && v.presence == 'online')ids.push(key);
+			if(v.incomplete && v.presence == 'online'){
+				//Don't load repeat. 
+				v.incomplete = false;
+				ids.push(key);
+			}
 		}
 		self.load(ids);
 	},
@@ -1433,7 +1458,7 @@ model("buddy", {
 		ids = idsArray(ids);
 		if(ids.length){
 			var self = this, options = self.options;
-			ajax({
+			self.request({
 				type: "get",
 				url: options.url,
 				cache: false,
@@ -1513,6 +1538,10 @@ model("buddy", {
 			var self = this;
 			self.data = self.data || [];
 			self.dataHash = {};
+			if(self.options.jsonp)
+				self.request = jsonp;
+			else
+				self.request = ajax;
 		},
 		get: function(id){
 			return this.dataHash[id];
@@ -1576,7 +1605,7 @@ model("buddy", {
 				if(!member){
 					info.nick = info.nick;
 					members.push(info);
-					room.members.length;
+					room.count = members.length;
 					self.trigger("addMember",[room_id, info]);
 				}
 			}
@@ -1604,7 +1633,7 @@ model("buddy", {
 		},
 		loadMember: function(id){
 			var self = this, options = self.options;
-			ajax({
+			self.request({
 				type: "get",
 				cache: false,
 				url: options.urls.member,
@@ -1621,7 +1650,7 @@ model("buddy", {
 		join:function(id){
 			var self = this, options = self.options, user = options.user;
 
-			ajax({
+			self.request({
 				cache: false,
 				type: "post",
 				url: options.urls.join,
@@ -1642,7 +1671,7 @@ model("buddy", {
 			var self = this, options = self.options, d = self.dataHash[id], user = options.user;
 			if(d){
 				d.initMember = false;
-				ajax({
+				self.request({
 					cache: false,
 					type: "post",
 					url: options.urls.leave,
@@ -1681,9 +1710,14 @@ model("history",{
 	urls:{load:"webim/history", clear:"webim/clear_history"}
 }, {
 	_init:function(){
-		this.data = this.data || {};
-		this.data.unicast = this.data.unicast || {};
-		this.data.multicast = this.data.multicast || {};
+		var self = this;
+		self.data = self.data || {};
+		self.data.unicast = self.data.unicast || {};
+		self.data.multicast = self.data.multicast || {};
+		if(self.options.jsonp)
+			self.request = jsonp;
+		else
+			self.request = ajax;
 	},
 	//get: function(type, id){
 	//	return this.data[type][id];
@@ -1729,7 +1763,7 @@ model("history",{
 		var self = this, options = self.options;
 		self.data[type][id] = [];
 		self.trigger("clear", [type, id]);
-		ajax({
+		self.request({
 			url: options.urls.clear,
 			type: "post",
 			cache: false,
@@ -1747,7 +1781,7 @@ model("history",{
 	load: function(type, id){
 		var self = this, options = self.options;
 		self.data[type][id] = [];
-		ajax({
+		self.request({
 			url: options.urls.load,
 			cache: false,
 			type: "get",
@@ -1768,8 +1802,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 2 17:14:42 2010 +0800
- * Commit: 22f8e73ebf7f440a3925874c5daad65ab6656179
+ * Date: Wed Sep 8 12:54:17 2010 +0800
+ * Commit: a5e03b96d9e63ee83e867e6175c479a893207b50
  */
 (function(window,document,undefined){
 
@@ -1810,6 +1844,10 @@ function HTMLEnCode(str)
 }
 function isUrl(str){
 	return /^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"])*$/.test(str);
+}
+
+function stripHTML(str){
+	return str ? str.replace(/<(?:.|\s)*?>/g, "") : "";
 }
 
 function subVisibleLength(cont,start,length){
@@ -2246,11 +2284,11 @@ extend(webimUI.prototype, objectExtend, {
 	},
 	_init: function(){
 		var self = this,
-		im = self.im = new webim(),
-		layout = self.layout = new webimUI.layout(null,{
+		im = self.im = new webim(null, self.options.imOptions),
+		options = self.options,
+		layout = self.layout = new webimUI.layout(null,extend({
 			chatAutoPop: im.setting.get("msg_auto_pop")
-		}),
-		options = self.options;
+		}, options.layoutOptions));
 		im.setting.get("play_sound") ? sound.enable() : sound.disable() ;
 		im.setting.get("minimize_layout") ? layout.collapse() : layout.expand(); 
 		self._initEvents();
@@ -2272,7 +2310,6 @@ extend(webimUI.prototype, objectExtend, {
 		//im events
 		im.bind("ready",function(){
 			layout.changeState("ready");
-			//show(layout.widget("room").window.element);
 		}).bind("go",function(data){
 			layout.changeState("active");
 			layout.option("user", data.user);
@@ -2280,7 +2317,6 @@ extend(webimUI.prototype, objectExtend, {
 			self._initStatus();
 			//setting.set(data.setting);
 		}).bind("stop", function(type){
-			//hide(layout.widget("room").window.element);
 			type == "offline" && layout.removeAllChat();
 			layout.updateAllChat();
 			layout.changeState("stop");
@@ -2305,7 +2341,13 @@ extend(webimUI.prototype, objectExtend, {
 		}).bind("update", function(data){
 			layout.updateChat("buddy", data);
 		});
-
+		room.bind("addMember", function(room_id, info){
+			var c = layout.chat("room", room_id);
+			c && c.addMember(info.id, info.nick, info.id == im.data.user.id);
+		}).bind("removeMember", function(room_id, info){
+			var c = layout.chat("room", room_id);
+			c && c.removeMember(info.id, info.nick);
+		});
 		layout.bind("collapse", function(){
 			setting.set("minimize_layout", true);
 		});
@@ -2407,14 +2449,15 @@ extend(webimUI.prototype, objectExtend, {
 		a && layout.focusChat(a);
 		// status end
 	},
-	addChat: function(type, id, options, winOptions, nick){
+	addChat: function(type, id, chatOptions, winOptions, nick){
 		type = _tr_type(type);
-		var self = this, layout = self.layout, im = self.im, history = self.im.history, buddy = im.buddy, room = im.room;
+		var self = this, layout = self.layout, im = self.im, history = self.im.history, buddy = im.buddy, room = im.room, options = self.options;
 		if(layout.chat(type, id))return;
 		if(type == "room"){
+			chatOptions = extend({}, options.roomChatOptions, chatOptions);
 			var h = history.multicast(id), info = room.get(id), _info = info || {id:id, nick: nick || id};
 			_info.presence = "online";
-			layout.addChat(type, _info, extend({history: h, block: true, emot:true, clearHistory: false, member: true, msgType: "multicast"}, options), winOptions);
+			layout.addChat(type, _info, extend({history: h, block: true, emot:true, clearHistory: false, member: true, msgType: "multicast"}, chatOptions), winOptions);
 			if(!h) history.load("multicast", id);
 			var chat = layout.chat(type, id);
 			chat.bind("sendMsg", function(msg){
@@ -2440,9 +2483,10 @@ extend(webimUI.prototype, objectExtend, {
 			});
 
 		}else{
+			chatOptions = extend({}, options.buddyChatOptions, chatOptions);
 			var h = history.unicast(id), info = buddy.get(id);
 			var _info = info || {id:id, nick: nick || id};
-			layout.addChat(type, _info, extend({history: h, block: false, emot:true, clearHistory: true, member: false, msgType: "unicast"}, options), winOptions);
+			layout.addChat(type, _info, extend({history: h, block: false, emot:true, clearHistory: true, member: false, msgType: "unicast"}, chatOptions), winOptions);
 			if(!info) buddy.update(id);
 			if(!h) history.load("unicast", id);
 			layout.chat(type, id).bind("sendMsg", function(msg){
@@ -3002,10 +3046,12 @@ widget("layout",{
 			prevCount : 0
 
 		});
-
+		if(options.unscalable){
+			addClass(this.$.layout, "webim-layout-unscalable");
+		}
+		options.isMinimize && self.collapse();
 		//self.addShortcut(options.shortcuts);
 		//self._initEvents();
-		options.isMinimize && self.collapse();
 		//self.buildUI();
 		//self.element.parent("body").length && self.buildUI();
 		//
@@ -3645,7 +3691,7 @@ function ieCacheSelection(e){
 }
 widget("chat",{
 	tpl_header: '<div><div id=":user" class="webim-user"> \
-			<a id=":userPic" class="webim-user-pic ui-corner-all ui-state-active" href="#id"><img width="50" height="50" src="about:blank" defaultsrc="" onerror="var d=this.getAttribute(\'defaultsrc\');if(d && this.src!=d)this.src=d;" class="ui-corner-all"></a> \
+			<a id=":userPic" class="webim-user-pic ui-corner-all ui-state-active" href="#id"><img width="50" height="50" src="" defaultsrc="" onerror="var d=this.getAttribute(\'defaultsrc\');if(d && this.src!=d)this.src=d;" class="ui-corner-all"></a> \
 			<span id=":userStatus" title="" class="webim-user-status">&nbsp;</span> \
 		     </div></div>',
         template:'<div class="webim-chat"> \
@@ -3686,6 +3732,9 @@ widget("chat",{
 			win.html(element);
 			self._bindWindow();
 			//self._fitUI();
+		}
+		if(options.simple){
+			hide(self.header);
 		}
 		self.update(options.info);
 		history.add(options.history);
@@ -3855,7 +3904,7 @@ widget("chat",{
 				$.userPic.firstChild.setAttribute("src", info.pic_url || info.default_pic_url);
 			}
 		},100);
-		$.userStatus.innerHTML = info.status || "&nbsp";
+		$.userStatus.innerHTML = stripHTML(info.status) || "&nbsp";
 		self.window.title(info.nick, info.show);
 	},
 	insert:function(value, isCursorPos){
@@ -4159,6 +4208,35 @@ widget("setting",{
 	destroy: function(){
 	}
 });
+/* 
+* ui.user:
+*
+*/
+app("user", {
+	init: function(options){
+		options = options || {};
+		var ui = this, im = ui.im;
+		var userUI = ui.user = new webimUI.user();
+		options.container && options.container.appendChild(userUI.element);
+		userUI.bind("online", function(params){
+			im.online(params);
+		}).bind("offline", function(){
+			im.offline();
+		}).bind("presence", function(params){
+			im.sendPresence(params);
+		});
+		userUI.update(im.data.user);
+	},
+	ready: function(){
+	},
+	go: function(){
+		this.user.update(this.im.data.user);
+	},
+	stop: function(type){
+		this.user.show("unavailable");
+	}
+});
+
 widget("user",{
 	template: '<div>  \
 		<div id=":user" class="webim-user"> \
@@ -4197,7 +4275,7 @@ widget("user",{
 	update: function(info){
 		var self = this, type = info.show || "unavailable", $ = self.$;
 		self.options.info = info;
-		$.userStatus.innerHTML = info.status || "&nbsp;";
+		$.userStatus.innerHTML =  stripHTML(info.status) || "&nbsp;";
 		$.userNick.innerHTML = info.nick || "";
 		$.userPic.setAttribute("href", info.url);
 		$.userPic.firstChild.setAttribute("defaultsrc", info.default_pic_url ? info.default_pic_url : "");
@@ -4259,9 +4337,13 @@ online
 */
 app("buddy", {
 	init: function(options){
+		options = options || {};
 		var ui = this, im = ui.im, buddy = im.buddy, layout = ui.layout;
-		var buddyUI = ui.buddy = new webimUI.buddy(null, options);
-		layout.addWidget(buddyUI, {
+		var buddyUI = ui.buddy = new webimUI.buddy(null, extend({
+			title: i18n("buddy")
+		}, options));
+
+		layout.addWidget(buddyUI, extend({
 			title: i18n("buddy"),
 			icon: "buddy",
 			sticky: im.setting.get("buddy_sticky"),
@@ -4269,7 +4351,11 @@ app("buddy", {
 			//       onlyIcon: true,
 			isMinimize: !im.status.get("b"),
 			titleVisibleLength: 19
-		});
+		}, options.windowOptions));
+		if(!options.disable_user){
+			ui.addApp("user");
+			buddyUI.window.subHeader(ui.user.element);
+		}
 		//buddy events
 		im.setting.bind("update",function(key, val){
 			if(key == "buddy_sticky")buddyUI.window.option("sticky", val);
@@ -4313,16 +4399,6 @@ app("buddy", {
 			buddyUI.remove(map(grep(data, grepInvisible), mapId));
 		});
 		buddyUI.offline();
-		//user events
-		var user = buddyUI.user;
-		user.bind("online", function(params){
-			im.online(params);
-		}).bind("offline", function(){
-			im.offline();
-		}).bind("presence", function(params){
-			im.sendPresence(params);
-		});
-		buddyUI.user.update(im.data.user);
 	},
 	ready: function(){
 		var ui = this, im = ui.im, buddy = im.buddy, buddyUI = ui.buddy;
@@ -4330,13 +4406,11 @@ app("buddy", {
 	},
 	go: function(){
 		var ui = this, im = ui.im, buddy = im.buddy, buddyUI = ui.buddy;
-		buddyUI.user.update(im.data.user);
 		buddyUI.titleCount();
 	},
 	stop: function(type){
 		var ui = this, im = ui.im, buddy = im.buddy, buddyUI = ui.buddy;
 		buddyUI.offline();
-		buddyUI.user.show("unavailable");
 		type && buddyUI.notice(type);
 	}
 });
@@ -4353,7 +4427,7 @@ widget("buddy",{
 	tpl_li: '<li title=""><a href="<%=url%>" rel="<%=id%>" class="ui-helper-clearfix"><em class="webim-icon webim-icon-<%=show%>" title="<%=human_show%>"><%=show%></em><img width="25" src="<%=pic_url%>" defaultsrc="<%=default_pic_url%>" onerror="var d=this.getAttribute(\'defaultsrc\');if(d && this.src!=d)this.src=d;" /><strong><%=nick%></strong><span><%=status%></span></a></li>'
 },{
 	_init: function(){
-		var self = this;
+		var self = this, options = self.options;
 		self.groups = {
 		};
 		self.li = {
@@ -4361,12 +4435,13 @@ widget("buddy",{
 		self.li_group = {
 		};
 		self.size = 0;
-		//self._initEvents();
-		self.user = new webimUI.user();
-		self.header = self.user.element;
-		if(self.window){
-			self.window.subHeader(self.header);
+		if(options.disable_group){
+			addClass(self.element, "webim-buddy-hidegroup");
 		}
+		if(options.simple){
+			addClass(self.element, "webim-buddy-simple");
+		}
+
 	},
 	_initEvents: function(){
 		var self = this, $ = self.$, search = $.search, input = $.searchInput, placeholder = i18n("search buddy"), activeClass = "ui-state-active";
@@ -4405,7 +4480,7 @@ self.trigger("offline");
 	},
 	titleCount: function(){
 		var self = this, size = self.size, win = self.window, empty = self.$.empty, element = self.element;
-		win && win.title(i18n("buddy") + "(" + (size ? size : "0") + ")");
+		win && win.title(self.options.title + "(" + (size ? size : "0") + ")");
 		if(!size){
 			show(empty);
 		}else{
@@ -4433,7 +4508,7 @@ self.trigger("offline");
 	_title: function(type){
 		var win = this.window;
 		if(win){
-			win.title(i18n("buddy") + "[" + i18n(type) + "]");
+			win.title(this.options.title + "[" + i18n(type) + "]");
 		}
 	},
 	notice: function(type, name){
@@ -4473,7 +4548,7 @@ self.trigger("offline");
 		el = el.nextSibling;
 		el.innerHTML = info.nick;
 		el = el.nextSibling;
-		el.innerHTML = info.status || "&nbsp;";
+		el.innerHTML = stripHTML(info.status) || "&nbsp;";
 		return el;
 	},
 	_addOne:function(info, end){
@@ -4481,7 +4556,7 @@ self.trigger("offline");
 		if(!li[id]){
 			self.size++;
 			if(!info.default_pic_url)info.default_pic_url = "";
-			info.status = info.status || "&nbsp;";
+			info.status = stripHTML(info.status) || "&nbsp;";
 			info.show = info.show || "available";
 			info.human_show = i18n(info.show);
 			info.pic_url = info.pic_url || "";
@@ -4623,12 +4698,8 @@ app("room",{
 			updateRoom(room.get(id));
 			room.join(id);
 		}).bind("addMember", function(room_id, info){
-			var c = layout.chat("room", room_id);
-			c && c.addMember(info.id, info.nick, info.id == im.data.user.id);
 			updateRoom(room.get(room_id));
 		}).bind("removeMember", function(room_id, info){
-			var c = layout.chat("room", room_id);
-			c && c.removeMember(info.id, info.nick);
 			updateRoom(room.get(room_id));
 		});
 		//room

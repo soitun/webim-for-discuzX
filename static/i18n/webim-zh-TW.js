@@ -78,7 +78,11 @@ webim.ui.i18n.store('zh-TW',{
 	"dnd": "\u5fd9\u788c",
 	"away": "\u96e2\u958b",
 	"invisible": "\u96b1\u8eab",
-	"unavailable": "\u96e2\u7dda"
+	"unavailable": "\u96e2\u7dda",
+	"online support": "\u5728\u7dda\u652f\u6301",
+	"location": "\u6b63\u5728",
+	"from": "\u4f86\u81ea"
+
 });
 
 webim.ui.i18n.store('zh-TW',{

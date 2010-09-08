@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 2 17:14:42 2010 +0800
- * Commit: 22f8e73ebf7f440a3925874c5daad65ab6656179
+ * Date: Wed Sep 8 12:54:17 2010 +0800
+ * Commit: a5e03b96d9e63ee83e867e6175c479a893207b50
  */
 
 body {
@@ -17,6 +17,7 @@ body {
 .webim, .webim *{ 
         margin:0;
         padding:0;
+	clear: none;
 }
 .webim img{
         border:0;
@@ -561,6 +562,11 @@ a .webim-icon, a .ui-icon{
 .webim-layout-minimize .webim-collapse-wrap{
         display: none;
 }
+.webim-layout-unscalable .webim-expand-wrap, 
+.webim-layout-unscalable .webim-collapse-wrap{
+	display: none;
+}
+
 /*****ie 6 *********/
 *  html{
 	background:url(blank) fixed; /*To prevent the jitter.*/
@@ -678,97 +684,6 @@ a .webim-icon, a .ui-icon{
 .webim .webim-member li{
 	margin: 0.1em 0.1em 0.1em 0.5em;
 }
-/*
- * widget setting
- */
-#webim-setting{
-        padding: 1em 0;
-}
-#webim-setting ul{
-	list-style: none;
-}
-#webim-setting ul li{
-        margin: .5em 1em;
-}
-#webim-setting ul li input{
-        vertical-align: middle;
-}
-
-#webim-setting ul li label{
-        padding-left: .2em;
-}
-.webim-setting-offline{
-  float:right;
-  position:absolute;
-  bottom:.5em;
-  left:18em;
-}
-/*
-.webim-setting-online{
-  auto:left;
-  float:right;
-  position:absolute;
-  bottom:.5em;
-  left:18em;
-}
-*/
-/*webim user*/
-.webim .webim-user{
-        margin-left: 5.4em;
-	height: 3.1em;
-}
-.webim .webim-user-pic{
-        float: left;
-	position: static !important;
-	position: fixed;/*display in ie6*/
-        margin-left: -5.5em;
-        /*margin-top: -1.8em;*/
-        margin-top: -1.4em;
-	width: 50px;
-	height: 50px;
-	padding: 1px;
-}
-.webim .webim-user-pic img{
-}
-.webim .webim-user-show{
-}
-
-.webim .webim-user-show h4{
-	text-align: left;
-	font-weight: normal;
-	overflow: hidden;
-	line-height: 1.4;
-	width: 100%;
-}
-.webim .webim-user-show h4 *{
-	float: left;
-}
-.webim .webim-user-show h4 strong{
-	padding-right: .5em;
-}
-
-.webim .webim-user-show p{
-	position: absolute;
-	z-index: 2;
-}
-
-.webim .webim-user-show p a{
-	display: block;
-	margin: 0 1em 0 .5em;
-}
-
-.webim .webim-user-show p a .webim-icon{
-	float: left;
-}
-
-.webim .webim-user-show .webim-icon{
-	margin-right: .5em;
-}
-
-.webim .webim-user-status{
-	font-size: .8em;
-        display: block;
-}
 #webim-buddy{
 	padding: .3em 0;
 }
@@ -861,19 +776,144 @@ a .webim-icon, a .ui-icon{
         float:left;
         margin-left: -2.5em;
 }
-/*fuck ie6  why ?*/
-* html  #webim-buddy ul li a img{
-        position: fixed;
-}
+
 #webim-buddy ul li a strong{
         display: block;
         font-weight: normal;
 }
+
 #webim-buddy ul li a span{
         display: block;
 	font-size: .8em;
+	height: 1.4em;
+	overflow: hidden;
 }
 
+#webim-buddy.webim-buddy-hidegroup ul h4{
+	display: none;
+}
+
+#webim-buddy.webim-buddy-hidegroup ul .webim-line{
+	display: none;
+}
+
+#webim-buddy.webim-buddy-simple ul li a img{
+	display: none;
+}
+
+#webim-buddy.webim-buddy-simple ul li a{
+	margin-left: .3em;
+}
+#webim-buddy.webim-buddy-simple ul li a strong{
+	display: inline;
+	padding-right: 5px;
+}
+#webim-buddy.webim-buddy-simple ul li a span{
+	display: inline;
+}
+
+/*fuck ie6  why ?*/
+* html  #webim-buddy ul li a img{
+        position: fixed;
+}
+
+/*
+ * widget setting
+ */
+#webim-setting{
+        padding: 1em 0;
+}
+#webim-setting ul{
+	list-style: none;
+}
+#webim-setting ul li{
+        margin: .5em 1em;
+}
+#webim-setting ul li input{
+        vertical-align: middle;
+}
+
+#webim-setting ul li label{
+        padding-left: .2em;
+}
+.webim-setting-offline{
+  float:right;
+  position:absolute;
+  bottom:.5em;
+  left:18em;
+}
+/*
+.webim-setting-online{
+  auto:left;
+  float:right;
+  position:absolute;
+  bottom:.5em;
+  left:18em;
+}
+*/
+/*webim user*/
+.webim .webim-user{
+        margin-left: 5.4em;
+	height: 3.1em;
+}
+.webim .webim-user-pic{
+        float: left;
+	position: static !important;
+	position: fixed;/*display in ie6*/
+        margin-left: -5.5em;
+        /*margin-top: -1.8em;*/
+        margin-top: -1.4em;
+	width: 50px;
+	height: 50px;
+	padding: 1px;
+}
+.webim .webim-user-pic img{
+}
+.webim .webim-user-show{
+}
+
+.webim .webim-user-show h4{
+	text-align: left;
+	font-weight: normal;
+	overflow: hidden;
+	line-height: 1.4;
+	width: 100%;
+}
+.webim .webim-user-show h4 *{
+	float: left;
+}
+.webim .webim-user-show h4 strong{
+	padding-right: .5em;
+}
+
+.webim .webim-user-show p{
+	position: absolute;
+	z-index: 2;
+}
+
+.webim .webim-user-show p a{
+	display: block;
+	margin: 0 1em 0 .5em;
+}
+
+.webim .webim-user-show p a .webim-icon{
+	float: left;
+}
+
+.webim .webim-user-show .webim-icon{
+	margin-right: .5em;
+}
+
+.webim .webim-user-status{
+	font-size: .8em;
+        display: block;
+	height: 2.8em;
+	overflow: hidden;
+}
+
+.webim .webim-panels .webim-user-status{
+	height: 4.2em;
+}
 #webim-room{
         padding: .3em 0;
 

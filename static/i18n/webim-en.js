@@ -78,7 +78,10 @@ webim.ui.i18n.store('en',{
 	"dnd": "Busy",
 	"away": "Away",
 	"invisible": "Invisible",
-	"unavailable": "Unavailable"
+	"unavailable": "Unavailable",
+	"online support": "online support",
+	"location": "location",
+	"from": "from"
 });
 
 webim.ui.i18n.store('zh-CN',{
