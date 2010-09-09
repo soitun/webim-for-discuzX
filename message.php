@@ -37,7 +37,6 @@ if(empty($ticket) || empty($type) || empty($to) || empty($body)){
 		"timestamp" => microtime(true)*1000,
 	));
 	if($send == 1){
-		require 'config.php';
 		$im = new WebIM($user, $ticket, $_IMC['domain'], $_IMC['apikey'], $_IMC['host'], $_IMC['port']);
 		$im->message($type, $to, $body, $style);
 	}

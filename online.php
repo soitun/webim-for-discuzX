@@ -17,7 +17,6 @@
  */
 
 include_once('common.php');
-require 'config.php';
 $im = new WebIM($user, null, $_IMC['domain'], $_IMC['apikey'], $_IMC['host'], $_IMC['port']);
 
 $im_buddies = array();//For online.

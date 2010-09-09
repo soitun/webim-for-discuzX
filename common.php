@@ -13,6 +13,8 @@ if(!defined('IN_DISCUZ') || !$_G['uid']) {
 //Find and insert data with utf8 client.
 DB::query("SET NAMES utf8");
 
+require 'config.php';
+
 //Cache friend_groups;
 $friend_groups = friend_group_list();
 foreach($friend_groups as $k => $v){
@@ -76,16 +78,18 @@ function complete_status($members){
 function online_buddy(){
 	global $friend_groups, $user;
 	$list = array();
-	$query = DB::query("SELECT f.fuid, f.fusername, f.gid FROM ".DB::table('home_friend')." f, ".DB::table('common_session')." s
-		WHERE f.uid='$user->uid' AND f.fuid = s.uid ORDER BY f.num DESC, f.dateline DESC");
+	$query = DB::query("SELECT f.fuid uid, f.fusername username, p.realname name, f.gid 
+		FROM ".DB::table('home_friend')." f, ".DB::table('common_session')." s, ".DB::table('common_member_profile')." p
+		WHERE f.uid='$user->uid' AND f.fuid = s.uid AND p.uid = s.uid 
+		ORDER BY f.num DESC, f.dateline DESC");
 	while ($value = DB::fetch($query)){
 		$list[] = (object)array(
-			"uid" => $value['fuid'],
-			"id" => $value['fusername'],
-			"nick" => $value['fusername'],
+			"uid" => $value['uid'],
+			"id" => $value['username'],
+			"nick" => nick($value),
 			"group" => $friend_groups[$value['gid']],
-			"url" => "home.php?mod=space&uid=".$value['fuid'],
-			"pic_url" => avatar($value['fuid'], 'small', true),
+			"url" => "home.php?mod=space&uid=".$value['uid'],
+			"pic_url" => avatar($value['uid'], 'small', true),
 		);
 	}
 	return $list;
@@ -115,15 +119,17 @@ function buddy($names, $uids = null){
 	$where_sql = $where_name && $where_uid ? "($where_name OR $where_uid)" : ($where_name ? $where_name : $where_uid);
 
 	$list = array();
-	$query = DB::query("SELECT m.uid, m.username, f.gid FROM ".DB::table('common_member')." m
+	$query = DB::query("SELECT m.uid, m.username, p.realname name, f.gid FROM ".DB::table('common_member')." m
 		LEFT JOIN ".DB::table('home_friend')." f 
-		ON f.fuid = m.uid AND f.uid = $user->uid
+		ON f.fuid = m.uid AND f.uid = $user->uid 
+		LEFT JOIN ".DB::table('common_member_profile')." p
+		ON m.uid = p.uid 
 		WHERE m.uid <> $user->uid AND $where_sql");
 	while ($value = DB::fetch($query)){
 		$list[] = (object)array(
 			"uid" => $value['uid'],
 			"id" => $value['username'],
-			"nick" => $value['username'],
+			"nick" => nick($value),
 			"group" => $value['gid'] ? $friend_groups[$value['gid']] : "stranger",
 			"url" => "home.php?mod=space&uid=".$value['uid'],
 			"pic_url" => avatar($value['uid'], 'small', true),
@@ -260,6 +266,11 @@ function setting(){
 		DB::insert('webim_settings', array('uid' => $user->uid, 'web' => '{}'));
 		return new stdClass();
 	}
+}
+
+function nick($sp) {
+	global $_IMC;
+	return (!$_IMC['show_realname']||empty($sp['name'])) ? $sp['username'] : $sp['name'];
 }
 
 function to_utf8($s){

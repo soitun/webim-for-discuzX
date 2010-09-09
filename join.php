@@ -20,7 +20,6 @@ if(empty($ticket) || empty($id)){
 }else{
 	$room = room($id)[0];
 	if($room){
-		require 'config.php';
 		$im = new WebIM($user, $ticket, $_IMC['domain'], $_IMC['apikey'], $_IMC['host'], $_IMC['port']);
 		$re = $im->join($id);
 		if($re){
