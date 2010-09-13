@@ -59,8 +59,10 @@ function complete_status($members){
 		for($i = 0; $i < $num; $i++){
 			$m = $members[$i];
 			$id = $m->uid;
-			$ids[] = $id;
-			$ob[$id] = $m;
+			if ( $id ) {
+				$ids[] = $id;
+				$ob[$id] = $m;
+			}
 		}
 		$ids = implode(",", $ids);
 		$query = DB::query("SELECT uid, spacenote FROM ".DB::table('common_member_field_home')." WHERE uid IN ($ids)");
