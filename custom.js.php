@@ -2,7 +2,6 @@
 
 header("Content-type: application/javascript");
 include_once('common.php');
-include_once('config.php');
 
 $setting = json_encode(setting());
 

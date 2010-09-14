@@ -19,10 +19,15 @@ class plugin_webim {
 		$config = $_G['cache']['plugin']['webim'];
 		$theme = empty($config['theme']) ? 'base' : $config['theme'];
 		$local = empty($config['local']) ? 'zh-CN' : $config['local'];
+		$min = ".min";
+		if ( isset( $_GET['webim_debug'] ) ) {
+			$min = "";
+		}
+
 		return <<<EOF
-		<link href="source/plugin/webim/static/webim.discuzX.min.css?@VERSION" media="all" type="text/css" rel="stylesheet"/>
+		<link href="source/plugin/webim/static/webim.discuzX$min.css?@VERSION" media="all" type="text/css" rel="stylesheet"/>
 		<link href="source/plugin/webim/static/themes/{$theme}/jquery.ui.theme.css?@VERSION" media="all" type="text/css" rel="stylesheet"/>
-		<script src="source/plugin/webim/static/webim.discuzX.min.js?@VERSION" type="text/javascript"></script>
+		<script src="source/plugin/webim/static/webim.discuzX$min.js?@VERSION" type="text/javascript"></script>
 		<script src="source/plugin/webim/static/i18n/webim-{$local}.js?@VERSION" type="text/javascript"></script>
 		<script src="source/plugin/webim/custom.js.php?@VERSION" type="text/javascript"></script>
 EOF;
