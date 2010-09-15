@@ -10,7 +10,7 @@
  *
  */
 include_once('common.php');
-$data = p('data');
+$data = gp('data');
 if(empty($data)){
 	header("HTTP/1.0 400 Bad Request");
 	echo 'Empty post $data';

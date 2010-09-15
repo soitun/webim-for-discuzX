@@ -14,8 +14,8 @@
 
 include_once('common.php');
 
-$show = p("show");
-$status = p("status");
+$show = gp("show");
+$status = gp("status");
 if(empty($ticket) || empty($show)){
 	header("HTTP/1.0 400 Bad Request");
 	echo 'Empty post $ticket or $show';

@@ -40,6 +40,9 @@ $setting = json_encode(setting());
 		msg: path + "webim/static/assets/sound/msg.mp3"
 	};
 	var ui = new webim.ui(document.body, {
+		imOptions: {
+			//jsonp: true
+		},
 		soundUrls: soundUrls
 	}), im = ui.im;
 	<?php

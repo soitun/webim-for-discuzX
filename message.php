@@ -16,11 +16,11 @@
  */
 
 include_once('common.php');
-$type = p("type");
-$offline = p("offline");
-$to = p("to");
-$body = p("body");
-$style = p("style");
+$type = gp("type");
+$offline = gp("offline");
+$to = gp("to");
+$body = gp("body");
+$style = gp("style");
 if(empty($ticket) || empty($type) || empty($to) || empty($body)){
 	header("HTTP/1.0 400 Bad Request");
 	echo 'Empty post $ticket or $type or $to or $body';

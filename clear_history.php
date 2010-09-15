@@ -12,7 +12,7 @@
 
 include_once('common.php');
 
-$id = p("id");
+$id = gp("id");
 if(empty($id)){
 	header("HTTP/1.0 400 Bad Request");
 	echo 'Empty post $id';
