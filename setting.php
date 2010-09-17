@@ -9,6 +9,9 @@
  * @post $data
  *
  */
+
+//discuzX1.5 will check url and report error when url content quote
+$_SERVER['REQUEST_URI'] = "";
 include_once('common.php');
 $data = gp('data');
 if(empty($data)){
@@ -16,6 +19,6 @@ if(empty($data)){
 	echo 'Empty post $data';
 }else{
 	DB::update('webim_settings', array('web' => $data), array('uid' => $user->uid));
-	echo 'ok';
+	echo callback( 'ok' );
 }
 

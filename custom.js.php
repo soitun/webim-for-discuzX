@@ -41,7 +41,7 @@ $setting = json_encode(setting());
 	};
 	var ui = new webim.ui(document.body, {
 		imOptions: {
-			//jsonp: true
+			jsonp: true
 		},
 		soundUrls: soundUrls
 	}), im = ui.im;

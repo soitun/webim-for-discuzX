@@ -22,6 +22,8 @@ if(empty($ticket) || empty($id)){
 	$re = $im->leave($id);
 	if($re != "ok"){
 		header("HTTP/1.0 404 Not Found");
+		echo $re;
+	} else {
+		echo callback( $re );
 	}
-	echo $re;
 }

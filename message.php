@@ -40,5 +40,5 @@ if(empty($ticket) || empty($type) || empty($to) || empty($body)){
 		$im = new WebIM($user, $ticket, $_IMC['domain'], $_IMC['apikey'], $_IMC['host'], $_IMC['port']);
 		$im->message($type, $to, $body, $style);
 	}
-	echo "ok";
+	echo callback( "ok" );
 }

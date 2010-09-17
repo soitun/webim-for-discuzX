@@ -16,6 +16,6 @@ if(empty($ticket)){
 	echo 'Empty post $ticket';
 }else{
 	$im = new WebIM($user, $ticket, $_IMC['domain'], $_IMC['apikey'], $_IMC['host'], $_IMC['port']);
-	echo $im->offline();
+	echo callback( $im->offline() );
 }
 
