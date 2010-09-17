@@ -33,6 +33,11 @@ foreach($friend_groups as $k => $v){
 $user->uid = $_G['uid'];
 $user->id = to_utf8($_G['username']);
 $user->nick = to_utf8($_G['username']);
+if( $_IMC['show_realname'] ){
+	$data = DB::fetch_first("SELECT realname FROM ".DB::table('common_member_profile')." WHERE uid = $user->uid");
+	if( $data && $data['realname'] )
+		$user->nick = $data['realname'];
+}
 $user->pic_url = avatar($user->uid, 'small', true);
 $user->show = gp('show') ? gp('show') : "available";
 $user->url = "home.php?mod=space&uid=".$user->uid;
