@@ -3,7 +3,7 @@ include_once('common.php');
 header("Content-type: application/javascript");
 /** set no cache in IE */
 header("Cache-Control: no-cache");
-$webim_jsonp = is_remote();
+$webim_jsonp = isset( $_GET['remote'] ) || is_remote();
 $webim_path = urlname();
 $setting = json_encode(setting());
 $user->show = 'unavailable';
