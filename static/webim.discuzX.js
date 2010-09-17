@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 16 23:02:19 2010 +0800
- * Commit: 1f98b0ccd6eee096d820e0df06b2327a09d6dbb4
+ * Date: Fri Sep 17 14:39:24 2010 +0800
+ * Commit: 2f70dfafc9df2210062a3c45ef3c8d47517a0258
  */
 (function(window, document, undefined){
 
@@ -588,32 +588,42 @@ var jsonpSupport = window.jsonpSupport = {
 	fragmentProxy: false
 };
 (function(){
-	var head = document.getElementsByTagName("head")[0] || document.createElement,
-	script = document.createElement("script"),
-	script2 = document.createElement("script"),
-	text = "window.jsonpSupport.defaultAsync = false;";
-	script.src = "about:blank";
-	script.onload = script.onerror = function() {
-		jsonpSupport.defaultAsync = true;
-		jsonpSupport.events = true;
-	}                
-	script.onreadystatechange = function() {
-		// ie defaultAsync = true
-		jsonpSupport.events = true;
-	}
-	head.appendChild( script );
-	try{
-		script2.appendChild( document.createTextNode( text ) );
-	} catch( e ){
-		script2.text = text;
-	}
-	head.appendChild( script2 );
-	setTimeout(function(){
-		script.onload = script.onerror = script.onreadystatechange = null;
-		head.removeChild( script );
-		head.removeChild( script2 );
-		head = script = script2 = null;
-	}, 1000);
+	var ua = navigator.userAgent.toLowerCase();
+	jsonpSupport.events = !/(opera)(?:.*version)?[ \/]([\w.]+)/.exec( ua );
+	jsonpSupport.defaultAsync = !!/(webkit)[ \/]([\w.]+)/.exec( ua );
+/*
+var head = document.getElementsByTagName("head")[0] || document.createElement,
+script = document.createElement("script"),
+script2 = document.createElement("script"),
+text = "window.jsonpSupport.defaultAsync = false;";
+script.src = "javascript:false";
+script.onload = function(e) {
+jsonpSupport.defaultAsync = true;
+jsonpSupport.events = true;
+};                
+
+script.onerror = function(e) {
+jsonpSupport.defaultAsync = true;
+jsonpSupport.events = true;
+};               
+script.onreadystatechange = function() {
+// ie defaultAsync = true
+jsonpSupport.events = true;
+};
+head.appendChild( script );
+try{
+script2.appendChild( document.createTextNode( text ) );
+} catch( e ){
+script2.text = text;
+}
+head.appendChild( script2 );
+setTimeout(function(){
+script.onload = script.onerror = script.onreadystatechange = null;
+head.removeChild( script );
+head.removeChild( script2 );
+head = script = script2 = null;
+}, 1000);
+*/
 	//Check fragment proxy
 	var frag = document.createDocumentFragment(),
 	script3 = document.createElement('script');
@@ -1974,8 +1984,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 16 23:26:42 2010 +0800
- * Commit: 6e27942c8c4a23fb038b94531ebadd36fc1698f7
+ * Date: Fri Sep 17 13:42:09 2010 +0800
+ * Commit: 586d46d73f71d63566b6d21151dbb855e6fd0633
  */
 (function(window,document,undefined){
 
@@ -4016,7 +4026,8 @@ widget("chat",{
 				return true;
 			}else{
 				var el = target(e), val = el.value;
-				if (trim(val)) {
+				// "0" will false
+				if (trim(val).length) {
 					self._sendMsg(val);
 					el.value = "";
 					preventDefault(e);
@@ -5272,6 +5283,13 @@ data
 model("notification",{
 	url: "webim/notifications"
 },{
+	_init: function(){
+		var self = this;
+		if(self.options.jsonp)
+			self.request = jsonp;
+		else
+			self.request = ajax;
+	},
 	grep: function(val, n){
 		return val && val.text;
 	},
@@ -5282,7 +5300,7 @@ model("notification",{
 	},
 	load: function(){
 		var self = this, options = self.options;
-		ajax({
+		self.request({
 			url: options.url,
 			cache: false,
 			dataType: "json",
@@ -5309,7 +5327,9 @@ app("notification", {
 	init: function(options){
 		var ui = this, im = ui.im, layout = ui.layout;
 		var notificationUI = ui.notification = new webimUI.notification(null, options);
-		var notification = im.notification = new webim.notification();
+		var notification = im.notification = new webim.notification(null, {
+			jsonp: im.options.jsonp
+		});
 		layout.addWidget(notificationUI, {
 			title: i18n("notification"),
 			icon: "notification",
