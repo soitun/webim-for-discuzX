@@ -295,11 +295,3 @@ function ids_array($ids){
 	return ($ids===NULL || $ids==="") ? array() : (is_array($ids) ? array_unique($ids) : array_unique(explode(",", $ids)));
 }
 
-function callback( $data ){
-	$data = json_encode($data);
-	if(gp("callback")){
-		return gp("callback") . "($data);";
-	}else{
-		return $data;
-	}
-}
