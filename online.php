@@ -149,10 +149,10 @@ if($data->success){
 
 	new_message_to_histroy();
 
-	echo json_encode($data);
+	echo callback($data);
 
 }else{
 	header("HTTP/1.0 404 Not Found");
-	echo json_encode($data->error_msg);
+	echo callback($data->error_msg);
 }
 

@@ -19,5 +19,5 @@ if(empty($ids)){
 }else{
 	$buddies = buddy($ids);
 	complete_status($buddies);
-	echo json_encode($buddies);
+	echo callback($buddies);
 }

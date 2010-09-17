@@ -13,7 +13,7 @@
 
 include_once('common.php');
 
-$id = p("id");
+$id = gp("id");
 if(empty($ticket) || empty($id)){
 	header("HTTP/1.0 400 Bad Request");
 	echo 'Empty post $ticket or $id';

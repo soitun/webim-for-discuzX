@@ -13,7 +13,7 @@
 
 include_once('common.php');
 
-$id = p("id");
+$id = gp("id");
 if(empty($ticket) || empty($id)){
 	header("HTTP/1.0 400 Bad Request");
 	echo 'Empty post $ticket or $id';
@@ -24,7 +24,7 @@ if(empty($ticket) || empty($id)){
 		$re = $im->join($id);
 		if($re){
 			$room->count = $re->count;
-			echo json_encode($room);
+			echo callback($room);
 		}else{
 			header("HTTP/1.0 404 Not Found");
 			echo "Con't join this room right now";

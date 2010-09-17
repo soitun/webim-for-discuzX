@@ -18,6 +18,7 @@ $_IMC["emot"] = "default";//表情主题
 $_IMC["disable_room"] = false;//禁止群组
 //$_IMC["show_realname"] = false;//是否显示好友真实姓名
 //$_IMC["opacity"] = 80;//toolbar背景透明度设置
+$_IMC["host_from_domain"] = false; //设定im服务器为访问域名,当独立部署时,公网内网同时访问时用
 
 $query = DB::query("SELECT v.* FROM ".DB::table('common_pluginvar')." v, 
 	".DB::table('common_plugin')." p 
@@ -28,3 +29,6 @@ while($var = DB::fetch($query)){
 	}
 }
 
+if( $_IMC["host_from_domain"] ){
+	$_IMC["host"] = $_SERVER['HTTP_HOST'];
+}
