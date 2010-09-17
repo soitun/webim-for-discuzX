@@ -1984,8 +1984,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Fri Sep 17 13:42:09 2010 +0800
- * Commit: 586d46d73f71d63566b6d21151dbb855e6fd0633
+ * Date: Fri Sep 17 14:44:09 2010 +0800
+ * Commit: 2bd38d361ea40db9b86fe88719a4bf2d04125000
  */
 (function(window,document,undefined){
 
@@ -2003,6 +2003,7 @@ inArray = webim.inArray,
 grep = webim.grep,
 JSON = webim.JSON,
 ajax = webim.ajax,
+jsonp = webim.jsonp,
 comet = webim.comet,
 model = webim.model,
 objectExtend = webim.objectExtend,
