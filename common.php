@@ -37,14 +37,15 @@ require_once( WEBIM_PATH . 'lib/class.webim_client.php' );
  * array $_IMC
  * boolean $im_is_admin
  * boolean $im_is_login
- * object $imuser require when $im_is_login
- * function webim_get_buddies()
+ * object $imuser require when $im_is_login is true
+ * function webim_get_buddies( $ids )
  * function webim_get_online_buddies()
- * function webim_get_rooms()
+ * function webim_get_rooms( $ids )
  * function webim_get_notifications()
- * function webim_login()
+ * function webim_login( $username, $password, $question, $answer ) require when $_IMC['allow_login'] is true
  *
  */
+
 require_once( WEBIM_PATH . 'interface.php' );
 
 /**

@@ -5,25 +5,25 @@
 	webim.extend(webim.setting.defaults.data, _IMC.setting );
 	var webim = window.webim;
 	webim.defaults.urls = {
-		online:path + "im.php?action=online",
-		offline:path + "im.php?action=offline",
-		message:path + "im.php?action=message",
-		presence:path + "im.php?action=presence",
-		refresh:path + "im.php?action=refresh",
-		status:path + "im.php?action=status"
+		online:path + "im.php?webim_action=online",
+		offline:path + "im.php?webim_action=offline",
+		message:path + "im.php?webim_action=message",
+		presence:path + "im.php?webim_action=presence",
+		refresh:path + "im.php?webim_action=refresh",
+		status:path + "im.php?webim_action=status"
 	};
-	webim.setting.defaults.url = path + "im.php?action=setting";
+	webim.setting.defaults.url = path + "im.php?webim_action=setting";
 	webim.history.defaults.urls = {
-		load: path + "im.php?action=history",
-		clear: path + "im.php?action=clear_history"
+		load: path + "im.php?webim_action=history",
+		clear: path + "im.php?webim_action=clear_history"
 	};
 	webim.room.defaults.urls = {
-		member: path + "im.php?action=members",
-		join: path + "im.php?action=join",
-		leave: path + "im.php?action=leave"
+		member: path + "im.php?webim_action=members",
+		join: path + "im.php?webim_action=join",
+		leave: path + "im.php?webim_action=leave"
 	};
-	webim.buddy.defaults.url = path + "im.php?action=buddies";
-	webim.notification.defaults.url = path + "im.php?action=notifications";
+	webim.buddy.defaults.url = path + "im.php?webim_action=buddies";
+	webim.notification.defaults.url = path + "im.php?webim_action=notifications";
 
 	webim.ui.emot.init({"dir": path + "static/images/emot/default"});
 	var soundUrls = {

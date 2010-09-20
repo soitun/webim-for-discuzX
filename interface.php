@@ -67,7 +67,15 @@ unset( $_dbconfig );
 //}
 
 if ( $_G['uid'] ) {
+	webim_set_user();
 	$im_is_login = true;
+
+} else {
+	$im_is_login = false;
+}
+
+function webim_set_user(){
+	global $_G, $imuser;
 	$imuser->uid = $_G['uid'];
 	$imuser->id = to_utf8( $_G['username'] );
 	$imuser->nick = to_utf8( $_G['username'] );
@@ -76,16 +84,24 @@ if ( $_G['uid'] ) {
 		if( $data && $data['realname'] )
 			$imuser->nick = $data['realname'];
 	}
-
 	$imuser->pic_url = avatar($imuser->uid, 'small', true);
 	$imuser->show = webim_gp('show') ? webim_gp('show') : "available";
 	$imuser->url = "home.php?mod=space&uid=".$imuser->uid;
 	complete_status( array( $imuser ) );
-} else {
-	$im_is_login = false;
 }
 
-function webim_login( $user, $password ) {
+function webim_login( $username, $password, $question = "", $answer = "" ) {
+	global $imuser, $_G, $im_is_login;
+	$_G['gp_cookietime'] = "";
+	require libfile('function/member');
+	$result = userlogin( $username, $password, $question, $answer, $_G['setting']['autoidselect'] ? 'auto' : $_G['gp_loginfield']);
+	if($result['status'] > 0) {
+		setloginstatus($result['member'], $_G['gp_cookietime'] ? 2592000 : 0);
+		$im_is_login = true;
+		webim_set_user();
+		return true;
+	}
+	return false;
 }
 
 
