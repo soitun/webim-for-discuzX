@@ -2,28 +2,28 @@
 (function(webim){
 	var path = _IMC.path;
 	//var menu = webim.JSON.decode(_IMC.menu);
-	webim.extend(webim.setting.defaults.data, webim.JSON.decode( _IMC.setting ));
+	webim.extend(webim.setting.defaults.data, _IMC.setting );
 	var webim = window.webim;
 	webim.defaults.urls = {
-		online:path + "online.php",
-		offline:path + "offline.php",
-		message:path + "message.php",
-		presence:path + "presence.php",
-		refresh:path + "refresh.php",
-		status:path + "status.php"
+		online:path + "im.php?action=online",
+		offline:path + "im.php?action=offline",
+		message:path + "im.php?action=message",
+		presence:path + "im.php?action=presence",
+		refresh:path + "im.php?action=refresh",
+		status:path + "im.php?action=status"
 	};
-	webim.setting.defaults.url = path + "setting.php";
+	webim.setting.defaults.url = path + "im.php?action=setting";
 	webim.history.defaults.urls = {
-		load: path + "history.php",
-		clear: path + "clear_history.php"
+		load: path + "im.php?action=history",
+		clear: path + "im.php?action=clear_history"
 	};
 	webim.room.defaults.urls = {
-		member: path + "members.php",
-		join: path + "join.php",
-		leave: path + "leave.php"
+		member: path + "im.php?action=members",
+		join: path + "im.php?action=join",
+		leave: path + "im.php?action=leave"
 	};
-	webim.buddy.defaults.url = path + "buddies.php";
-	webim.notification.defaults.url = path + "notifications.php";
+	webim.buddy.defaults.url = path + "im.php?action=buddies";
+	webim.notification.defaults.url = path + "im.php?action=notifications";
 
 	webim.ui.emot.init({"dir": path + "static/images/emot/default"});
 	var soundUrls = {
@@ -37,7 +37,7 @@
 		soundUrls: soundUrls
 	}), im = ui.im;
 
-	im.user( webim.JSON.decode( _IMC.user ) );
+	im.user( _IMC.user );
 	//ui.addApp("menu", {"data": menu});
 	//rm shortcut in uchome
 	//ui.layout.addShortcut( menu);
