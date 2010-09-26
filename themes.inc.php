@@ -42,7 +42,11 @@ echo $notice;
 showtips($tl['themes_tips']);
 
 $path = dirname(__FILE__).DIRECTORY_SEPARATOR."static".DIRECTORY_SEPARATOR."themes";
+<<<<<<< HEAD
 $files = webim_scan_subdir($path);
+=======
+$files = webim_scan_subdir( $path );
+>>>>>>> 2ffb558e88349ee0d116700604c7d5493805e373
 $html = '<ul id="themes">';
 foreach ($files as $k => $v){
 	$t_path = $path.DIRECTORY_SEPARATOR.$v;
