@@ -4,7 +4,7 @@ PRIFIX= .
 SRC_DIR= ${PRIFIX}
 DIST_DIR= ${PRIFIX}/dist
 LIB_DIR= ${PRIFIX}/lib
-VERSION= 1.1
+VERSION= 1.2
 PRODUCT_NAME= DiscuzX
 CACHE_DIR= ${PRIFIX}/webim
 REL_FILE = ${DIST_DIR}/WebIM_For_${PRODUCT_NAME}-${VERSION}.zip
@@ -14,10 +14,10 @@ REPLACE_VER= sed s/@VERSION/${VERSION}/
 
 SRC_FILES = ${SRC_DIR}/*.php \
 	    ${SRC_DIR}/*.md \
+	    ${SRC_DIR}/*.txt \
 	    ${SRC_DIR}/*.js \
 	    ${SRC_DIR}/lib \
 	    ${SRC_DIR}/static \
-	    ${SRC_DIR}/template \
 
 all: ${REL_FILE}
 	@@echo "Build complete."
@@ -35,6 +35,7 @@ ${CACHE_DIR}: ${LIB_DIR}/webim.class.php
 	@@rm -rf ${CACHE_DIR}/lib/.git
 	@@echo "Change version"
 	@@cat ${SRC_DIR}/config.php | ${REPLACE_VER} > ${CACHE_DIR}/config.php
+	@@cat ${SRC_DIR}/common.php | ${REPLACE_VER} > ${CACHE_DIR}/common.php
 	@@cat ${SRC_DIR}/webim.class.php | ${REPLACE_VER} > ${CACHE_DIR}/webim.class.php
 	@@echo "Convert charset"
 	@@cat ${CONFIG_FILE} | ${REPLACE_VER} > ${CACHE_DIR}/discuz_plugin_webim_SC_UTF8.xml

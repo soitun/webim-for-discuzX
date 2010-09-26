@@ -30,6 +30,4 @@ while($var = DB::fetch($query)){
 	}
 }
 
-if( $_IMC["host_from_domain"] ){
-	$_IMC["host"] = $_SERVER['HTTP_HOST'];
-}
+

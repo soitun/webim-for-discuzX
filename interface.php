@@ -27,7 +27,7 @@ $discuz = & discuz_core::instance();
 $discuz->init();
 
 //Find and insert data with utf8 client.
-DB::query( "SET NAMES utf8" );
+@DB::query( "SET NAMES utf8" );
 
 require 'config.php';
 

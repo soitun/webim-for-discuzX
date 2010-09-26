@@ -1,5 +1,8 @@
 <?php
 include_once('common.php');
+if ( !$im_is_login ) {
+	        exit('"Please login at first."');
+}
 header("Content-type: application/javascript");
 /** set no cache in IE */
 header("Cache-Control: no-cache");
