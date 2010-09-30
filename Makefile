@@ -36,7 +36,6 @@ ${CACHE_DIR}: ${LIB_DIR}/webim.class.php
 	@@echo "Change version"
 	@@cat ${SRC_DIR}/config.php | ${REPLACE_VER} > ${CACHE_DIR}/config.php
 	@@cat ${SRC_DIR}/common.php | ${REPLACE_VER} > ${CACHE_DIR}/common.php
-	@@cat ${SRC_DIR}/webim.class.php | ${REPLACE_VER} > ${CACHE_DIR}/webim.class.php
 	@@echo "Convert charset"
 	@@cat ${CONFIG_FILE} | ${REPLACE_VER} > ${CACHE_DIR}/discuz_plugin_webim_SC_UTF8.xml
 	@@iconv -f UTF-8 -t GBK ${CONFIG_FILE} | ${REPLACE_VER} > ${CACHE_DIR}/discuz_plugin_webim_SC_GBK.xml
