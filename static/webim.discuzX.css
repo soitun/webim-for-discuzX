@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Fri Sep 17 14:44:09 2010 +0800
- * Commit: 2bd38d361ea40db9b86fe88719a4bf2d04125000
+ * Date: Tue Sep 28 19:17:56 2010 +0800
+ * Commit: b25e4d57eda97bf89f83dc318d9d1ed5491b9327
  */
 
 body {
@@ -156,6 +156,14 @@ a .webim-icon, a .ui-icon{
 
  }
 
+ .webim-icon-fontcolor{
+	 background-position:-32px -32px;
+ }
+
+ .webim-icon-download{
+	 background-position:-48px -32px;
+ }
+
 .webim-icon-available{
 	 background-position:0 -80px;
 }
@@ -293,6 +301,12 @@ a .webim-icon, a .ui-icon{
 .webim-layout-minimize{
         left: auto;
 }
+
+/** The layout will max width in IE 6,7 */
+.webim-layout-minimize .webim-layout-r{
+	float: left;
+}
+
 .webim-layout .webim-bgiframe{
 	height: 2.6em;
 	top: -1px;
@@ -586,10 +600,8 @@ a .webim-icon, a .ui-icon{
 * html  .webim-layout-minimize .webim-ui{
 	display: inline;
 }
-* html  .webim-layout-minimize .webim-layout-r{
-	float: left;
-}
 /* end */
+
 
 
 /**/
@@ -687,11 +699,23 @@ a .webim-icon, a .ui-icon{
 #webim-buddy{
 	padding: .3em 0;
 }
+
+#webim-buddy .webim-buddy-error{
+	padding: .2em .5em;
+	margin: .5em 0;
+}
+
+#webim-buddy .webim-buddy-logo{
+	background: url("images/logo.png") no-repeat center;
+	height: 100px;
+}
+
 #webim-buddy .webim-buddy-search{
         padding: 0em 1.6em 0em 0em;
         margin: .3em .5em .5em;
 	display: none;
 }
+
 #webim-buddy .webim-buddy-search input{
         border: none;
         background: none;
@@ -702,11 +726,13 @@ a .webim-icon, a .ui-icon{
 	/*
 	*/
 }
+
 #webim-buddy .webim-buddy-search em{
         float: right;
 	display: inline;
         margin: .1em -1.5em 0 0;
 }
+
 #webim-buddy .webim-buddy-online{
         padding: 1em;
         text-align: center;
@@ -716,10 +742,12 @@ a .webim-icon, a .ui-icon{
 #webim-buddy .webim-buddy-online a{
         padding: 1em 2em;
 }
+
 #webim-buddy .webim-buddy-content{
         padding: .2em .5em .3em;
         position:relative;
 }
+
 /*fuck ie6  why ?*/
 * html  #webim-buddy .webim-buddy-content{
         position: fixed;
@@ -889,6 +917,7 @@ a .webim-icon, a .ui-icon{
 .webim .webim-user-show p{
 	position: absolute;
 	z-index: 2;
+	margin-top: -60px;
 }
 
 .webim .webim-user-show p a{
@@ -913,6 +942,37 @@ a .webim-icon, a .ui-icon{
 
 .webim .webim-panels .webim-user-status{
 	height: 4.2em;
+}
+/*webim login*/
+
+.webim .webim-login{
+	padding: 0 1em;
+}
+.webim .webim-login p{
+	overflow: hidden;
+	margin: 1em 0;
+}
+.webim .webim-login form label{
+	float: left;
+	width: 33%;
+}
+.webim .webim-login form input
+,.webim .webim-login form select{
+	float: left;
+	width: 60%;
+	color: inherit;
+}
+.webim .webim-login form .webim-login-submit{
+	float: none;
+	padding: .2em 0;
+}
+
+.webim .webim-login-notice{
+}
+
+.webim .webim-login-error{
+	padding: .2em .5em;
+	margin: .5em 0;
 }
 #webim-room{
         padding: .3em 0;
