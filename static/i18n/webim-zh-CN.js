@@ -52,9 +52,8 @@ webim.ui.i18n.store('zh-CN',{
 	"chat with":"\u548c{{name}}\u804a\u5929",
 	"chat with me":"\u548c\u6211\u804a\u5929",
 	"new message":"\u6709\u65b0\u6d88\u606f",
-	"connect error":"\u8fde\u63a5\u5931\u8d25",
-	"disconnect":"\u8fde\u63a5\u65ad\u5f00",
-	"online error":"\u767b\u5f55\u5931\u8d25",
+	"Connect Error":"\u8fde\u63a5\u5931\u8d25",
+	"Disconnect":"\u8fde\u63a5\u65ad\u5f00",
 	"play_sound": "\u6536\u5230\u65b0\u6d88\u606f\u65f6\u64ad\u653e\u63d0\u793a\u97f3",
 	"buddy_sticky": "\u4fdd\u6301\u804a\u5929\u7a97\u53e3\u59cb\u7ec8\u6253\u5f00",
 	"msg_auto_pop": "\u65b0\u6d88\u606f\u65f6\u81ea\u52a8\u5f39\u51fa\u804a\u5929\u7a97\u53e3",
@@ -81,7 +80,19 @@ webim.ui.i18n.store('zh-CN',{
 	"unavailable": "\u79bb\u7ebf",
 	"online support": "\u5728\u7ebf\u652f\u6301",
 	"location": "\u6b63\u5728",
-	"from": "\u6765\u81ea"
+	"from": "\u6765\u81ea",
+	"download history": "\u4e0b\u8f7d\u5386\u53f2\u8bb0\u5f55",
+	"font color": "\u6587\u5b57\u989c\u8272",
+	"Not Found" : "\u8fde\u63a5\u7f51\u7edc\u5931\u8d25",
+	"Forbidden": "\u4e0d\u5141\u8bb8\u767b\u5f55",
+	"Not Authorized" : "\u767b\u5f55\u5931\u8d25",
+	"IM Server Not Found": "\u672a\u627e\u5230IM\u670d\u52a1\u5668",
+        "IM Server Not Authorized": "\u767b\u5f55IM\u670d\u52a1\u5668\u5931\u8d25",
+	"username": "\u7528\u6237\u540d",
+	"password": "\u5bc6\u7801",
+	"question": "\u95ee\u9898",
+	"answer": "\u7b54\u6848",
+	"login": "\u767b\u5f55"
 });
 
 webim.ui.i18n.store('zh-CN',{
