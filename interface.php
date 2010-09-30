@@ -111,7 +111,13 @@ function webim_login( $username, $password, $question = "", $answer = "" ) {
 	global $imuser, $_G, $im_is_login;
 	$username = from_utf8( $username );
 	$_G['gp_cookietime'] = "";
-	require libfile('function/member');
+	// login and misc in X1, member in X1.5
+	$lib = libfile('function/login');
+	if( $lib ) require_once $lib;        
+	$lib = libfile('function/misc');        
+	if( $lib ) require_once $lib;
+	$lib = libfile('function/member');
+	if( $lib ) require_once $lib;
 	$result = userlogin( $username, $password, $question, $answer, $_G['setting']['autoidselect'] ? 'auto' : $_G['gp_loginfield']);
 	if($result['status'] > 0) {
 		setloginstatus($result['member'], $_G['gp_cookietime'] ? 2592000 : 0);
