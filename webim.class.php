@@ -13,9 +13,6 @@ class plugin_webim {
 
 	function global_footer() {
 		global $_G;
-		if(!$_G['uid']) {
-			return;
-		}
 		return '<script src="source/plugin/webim/custom.js.php" type="text/javascript"></script>';
 	}
 }

@@ -17,19 +17,23 @@
  *
  */
 
+define( 'WEBIM_PRODUCT_NAME', 'discuzX' );
+
 //discuzX1.5 will check url and report error when url content quote
 $_SERVER['REQUEST_URI'] = "";
-require_once '../../class/class_core.php';
-require_once '../../function/function_friend.php';
-require_once '../../function/function_group.php';
+if ( !defined('IN_DISCUZ') ) {
+	require_once '../../class/class_core.php';
+	$discuz = & discuz_core::instance();
+	$discuz->init();
+}
+require_once DISCUZ_ROOT . './source/function/function_friend.php';
+require_once DISCUZ_ROOT . './source/function/function_group.php';
 
-$discuz = & discuz_core::instance();
-$discuz->init();
 
 //Find and insert data with utf8 client.
 @DB::query( "SET NAMES utf8" );
 
-require 'config.php';
+@include_once 'config.php';
 
 /**
  *
@@ -74,11 +78,24 @@ if ( $_G['uid'] ) {
 	$im_is_login = false;
 }
 
-function webim_set_user(){
+
+$site_url = dirname ( dirname ( dirname( webim_urlpath() ) ) ) . "/";
+
+function profile_url( $id ) {
+	global $site_url;
+	return $site_url . "home.php?mod=space&uid=" . $id;
+}
+
+function webim_get_menu () {
+	return array();
+}
+
+function webim_set_user( $is_utf8 = false ){
 	global $_G, $imuser;
 	$imuser->uid = $_G['uid'];
-	$imuser->id = to_utf8( $_G['username'] );
-	$imuser->nick = to_utf8( $_G['username'] );
+	$id = $is_utf8 ? $_G['username'] : to_utf8( $_G['username'] );
+	$imuser->id = $id;
+	$imuser->nick = $id;
 	if( $_IMC['show_realname'] ) {
 		$data = DB::fetch_first("SELECT realname FROM ".DB::table('common_member_profile')." WHERE uid = $imuser->uid");
 		if( $data && $data['realname'] )
@@ -86,19 +103,20 @@ function webim_set_user(){
 	}
 	$imuser->pic_url = avatar($imuser->uid, 'small', true);
 	$imuser->show = webim_gp('show') ? webim_gp('show') : "available";
-	$imuser->url = "home.php?mod=space&uid=".$imuser->uid;
+	$imuser->url = profile_url( $imuser->uid );
 	complete_status( array( $imuser ) );
 }
 
 function webim_login( $username, $password, $question = "", $answer = "" ) {
 	global $imuser, $_G, $im_is_login;
+	$username = from_utf8( $username );
 	$_G['gp_cookietime'] = "";
 	require libfile('function/member');
 	$result = userlogin( $username, $password, $question, $answer, $_G['setting']['autoidselect'] ? 'auto' : $_G['gp_loginfield']);
 	if($result['status'] > 0) {
 		setloginstatus($result['member'], $_G['gp_cookietime'] ? 2592000 : 0);
 		$im_is_login = true;
-		webim_set_user();
+		webim_set_user( true );
 		return true;
 	}
 	return false;
@@ -129,7 +147,7 @@ function webim_get_online_buddies(){
 			"id" => $value['username'],
 			"nick" => nick($value),
 			"group" => $friend_groups[$value['gid']],
-			"url" => "home.php?mod=space&uid=".$value['uid'],
+			"url" => profile_url( $value['uid'] ),
 			"pic_url" => avatar($value['uid'], 'small', true),
 		);
 	}
@@ -173,7 +191,7 @@ function webim_get_buddies( $names, $uids = null ){
 			"id" => $value['username'],
 			"nick" => nick($value),
 			"group" => $value['gid'] ? $friend_groups[$value['gid']] : "stranger",
-			"url" => "home.php?mod=space&uid=".$value['uid'],
+			"url" => profile_url( $value['uid'] ),
 			"pic_url" => avatar($value['uid'], 'small', true),
 		);
 	}
@@ -188,9 +206,13 @@ function webim_get_buddies( $names, $uids = null ){
  */
 
 function webim_get_rooms($ids=null){
-	global $imuser;
+	global $imuser, $site_url;
 	if(!$ids){
-		$ids = DB::result_first("SELECT fid FROM ".DB::table("forum_groupuser")." WHERE uid=$imuser->uid");
+		$query = DB::query("SELECT fid FROM ".DB::table("forum_groupuser")." WHERE uid=$imuser->uid");
+		while ($value = DB::fetch($query)){
+			$ids[] = $value['fid'];
+		}
+		$ids = implode( ",", $ids );
 	}
 	$list = array();
 	if(!$ids){
@@ -207,8 +229,8 @@ function webim_get_rooms($ids=null){
 			"fid" => $value['fid'],
 			"id" => $value['fid'],
 			"nick" => $value['name'],
-			"url" => "forum.php?mod=group&fid=".$value['fid'],
-			"pic_url" => get_groupimg($value['icon'], 'icon'),
+			"url" => $site_url . "forum.php?mod=group&fid=".$value['fid'],
+			"pic_url" => $site_url . get_groupimg($value['icon'], 'icon'),
 			"status" => $value['description'],
 			"count" => 0,
 			"all_count" => $value['membernum'],
@@ -265,6 +287,19 @@ function to_utf8( $s ) {
 		} else {
 			require_once DISCUZ_ROOT . './source/class/class_chinese.php';
 			$chs = new Chinese( CHARSET, 'utf-8' );
+			return $chs->Convert( $s );
+		}
+	}
+}
+function from_utf8( $s ) {
+	if( strtoupper( CHARSET ) == 'UTF-8' ) {
+		return $s;
+	} else {
+		if ( function_exists( 'iconv' ) ) {
+			return iconv( 'utf-8', CHARSET, $s );
+		} else {
+			require_once DISCUZ_ROOT . './source/class/class_chinese.php';
+			$chs = new Chinese( 'utf-8', CHARSET );
 			return $chs->Convert( $s );
 		}
 	}

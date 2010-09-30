@@ -31,6 +31,15 @@
 					<item id="adminid"><![CDATA[0]]></item>
 					<item id="displayorder"><![CDATA[0]]></item>
 				</item>
+				<item id="2">
+					<item id="name"><![CDATA[histories]]></item>
+					<item id="menu"><![CDATA[聊天记录]]></item>
+					<item id="url"><![CDATA[]]></item>
+					<item id="type"><![CDATA[3]]></item>
+					<item id="adminid"><![CDATA[0]]></item>
+					<item id="displayorder"><![CDATA[0]]></item>
+				</item>
+
 			</item>
 		</item>
 		<item id="version"><![CDATA[X1]]></item>
@@ -127,6 +136,15 @@
 				<item id="value"><![CDATA[0]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
+			<item id="10">
+				<item id="displayorder"><![CDATA[11]]></item>
+				<item id="title"><![CDATA[支持从IM登录]]></item>
+				<item id="description"><![CDATA[允许未登录时显示IM，并可从im登录]]></item>
+				<item id="variable"><![CDATA[enable_login]]></item>
+				<item id="type"><![CDATA[radio]]></item>
+				<item id="value"><![CDATA[0]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
 		</item>
 		<item id="intro"><![CDATA[webim是一个为DiscuzX用户打造的网页版及时聊天工具，用户通过聊天工具栏可随即与在线好友聊天。在线版用户安装后需要到webim20.cn注册一个apikey，配置后即可使用。更多帮助信息请访问 [url=http://www.webim20.cn]webim20.cn[/url]
 
@@ -143,6 +161,11 @@
 				<item id="example"><![CDATA[示例]]></item>
 				<item id="themes_tips"><![CDATA[选择你喜欢的主题，点击便可立即更换]]></item>
 				<item id="themes_success"><![CDATA[主题更新成功，您可以更新DiscuzX页面查看效果。]]></item>
+				<item id="histories_num"><![CDATA[网站目前聊天记录条数]]></item>
+				<item id="clear_all"><![CDATA[清理所有聊天记录]]></item>
+				<item id="clear_weekago"><![CDATA[清理一周前的记录]]></item>
+				<item id="clear_monthago"><![CDATA[清理一个月前的记录]]></item>
+				<item id="clear_3monthago"><![CDATA[清理三个月前的记录]]></item>
 			</item>
 		</item>
 	</item>
