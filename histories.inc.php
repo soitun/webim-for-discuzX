@@ -29,7 +29,7 @@ if( $_G['gp_period'] ){
 		$ago = 0;
 	}
 	$ago = ( time() - $ago ) * 1000;
-	$imdb->query( $imdb->prepare( "DELETE FROM $imdb->webim_histories WHERE `timestamp` < %d", $ago ) );
+	$imdb->query( $imdb->prepare( "DELETE FROM $imdb->webim_histories WHERE `timestamp` < %s", $ago ) );
 }
 
 $count = $imdb->get_var( $imdb->prepare( "SELECT count(*) FROM $imdb->webim_histories" ) );
