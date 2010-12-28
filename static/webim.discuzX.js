@@ -2003,8 +2003,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Thu Sep 30 12:26:51 2010 +0800
- * Commit: b1fc9be9f51fb99453481f8412c572614d0b332d
+ * Date: Fri Dec 24 16:32:20 2010 +0800
+ * Commit: ee5c2661578245f8e273838c2f97116f77f5935a
  */
 (function(window,document,undefined){
 
@@ -2669,7 +2669,7 @@ extend(webimUI.prototype, objectExtend, {
 			}).bind("downloadHistory", function(info){
 				history.download("multicast", info.id);
 			}).bind("select", function(info){
-				buddy.online(info.id);//online
+				buddy.presence(info);//online
 				self.addChat("buddy", info.id, null, null, info.nick);
 				layout.focusChat("buddy", info.id);
 			}).bind("block", function(d){

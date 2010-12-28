@@ -80,6 +80,7 @@ if ( $_G['uid'] ) {
 
 
 $site_url = dirname ( dirname ( dirname( webim_urlpath() ) ) ) . "/";
+$site_url = "";
 
 function profile_url( $id ) {
 	global $site_url;
@@ -311,3 +312,4 @@ function from_utf8( $s ) {
 	}
 }
 
+?>
