@@ -5,8 +5,8 @@
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Tue Sep 28 19:32:15 2010 +0800
- * Commit: 0b2752a7bde44a89ba504019f3aa3ac5a75c5f43
+ * Date: Fri Dec 31 22:47:51 2010 +0800
+ * Commit: c5c22d876981a94ab63c4504e5999471d1a1e243
  */
 (function(window, document, undefined){
 
@@ -949,6 +949,7 @@ extend(comet.prototype, objectExtend, {
                 if(options.jsonp){
                 	extend(o,{
                 	        timeout: options.timeout,
+				async: true,
                 	        dataType: 'jsonp',
                 	        jsonp: 'callback'
                 	});
@@ -2003,8 +2004,8 @@ model("history",{
  * Copyright (c) 2010 Hidden
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Fri Dec 24 16:32:20 2010 +0800
- * Commit: ee5c2661578245f8e273838c2f97116f77f5935a
+ * Date: Fri Dec 31 22:48:17 2010 +0800
+ * Commit: c3e67de3718815747038c2d69985f528e1b86a72
  */
 (function(window,document,undefined){
 
@@ -2670,6 +2671,7 @@ extend(webimUI.prototype, objectExtend, {
 				history.download("multicast", info.id);
 			}).bind("select", function(info){
 				buddy.presence(info);//online
+				buddy.complete();//Load info.
 				self.addChat("buddy", info.id, null, null, info.nick);
 				layout.focusChat("buddy", info.id);
 			}).bind("block", function(d){
